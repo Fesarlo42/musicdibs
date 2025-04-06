@@ -3,10 +3,10 @@
 USE musicdibs;
 
 -- Add Users
-INSERT INTO users ( password, email, first_name, last_name, role, is_active) 
+INSERT INTO users ( password, email, first_name, last_name, role) 
 VALUES 
-('admin123', 'admin@example.com', 'Admin', 'User', 'admin', TRUE),
-('password123', 'jj@example.com', 'Jack', 'Johnson', 'user', TRUE);
+('admin123', 'admin@example.com', 'Admin', 'User', 'admin'),
+('password123', 'jj@example.com', 'Jack', 'Johnson', 'user');
 
 -- Add Credits for the user
 INSERT INTO credit_transactions (user_id, type, amount, transaction_date)

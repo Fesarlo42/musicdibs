@@ -11,20 +11,8 @@ CREATE TABLE IF NOT EXISTS users (
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     role ENUM('user', 'admin') DEFAULT 'user',
-    is_active BOOLEAN DEFAULT FALSE,
     ibs_sig VARCHAR(100) UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- User verification token for email confirmation
-CREATE TABLE IF NOT EXISTS verification_tokens (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    token VARCHAR(255) NOT NULL UNIQUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    expires_at TIMESTAMP NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id) 
-        ON DELETE CASCADE
 );
 
 -- Music genres
