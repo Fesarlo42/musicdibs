@@ -26,11 +26,18 @@ def create_genre(genre: GenreCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Genre with this name already exists")
     
     # Create new genre
-    db_genre = GenreModel(name=genre.name)
-    db.add(db_genre)
-    db.commit()
-    db.refresh(db_genre)
-    return db_genre
+    try:
+        db_genre = GenreModel(name=genre.name)
+        db.add(db_genre)
+        db.commit()
+        db.refresh(db_genre)
+        return db_genre
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error creating new genre: {str(e)}"
+        )
 
 
 @router.delete("/{genre_id}", status_code=204)

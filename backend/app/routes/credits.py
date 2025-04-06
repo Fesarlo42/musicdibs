@@ -39,22 +39,29 @@ def add_credits(credit_data: CreditsAdd, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     
     # Create credit transaction
-    transaction = CreditTransaction(
-        user_id=credit_data.user_id,
-        type='credit',
-        amount=credit_data.amount
-    )
-    
-    db.add(transaction)
-    db.commit()
-    db.refresh(transaction)
+    try:
+        transaction = CreditTransaction(
+            user_id=credit_data.user_id,
+            type='credit',
+            amount=credit_data.amount
+        )
+        
+        db.add(transaction)
+        db.commit()
+        db.refresh(transaction)
 
-    balance = CreditsBalance(
-        user_id=credit_data.user_id,
-        total_credits=get_credits_balance(credit_data.user_id, db)
-    )
-    
-    return balance
+        balance = CreditsBalance(
+            user_id=credit_data.user_id,
+            total_credits=get_credits_balance(credit_data.user_id, db)
+        )
+        
+        return balance
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error adding credits: {str(e)}"
+        )
 
 @router.post("/remove", response_model=CreditsBalance)
 def remove_credits(credit_data: CreditsRemove, db: Session = Depends(get_db)):
@@ -72,36 +79,43 @@ def remove_credits(credit_data: CreditsRemove, db: Session = Depends(get_db)):
         )
 
     # Create credit transaction
-    transaction = CreditTransaction(
-        user_id=credit_data.user_id,
-        type='debit',
-        amount=credit_data.amount
-    )
-    
-    db.add(transaction)
-    db.commit()
-    db.refresh(transaction)
-    
-    balance = CreditsBalance(
-        user_id=credit_data.user_id,
-        total_credits=get_credits_balance(credit_data.user_id, db)
-    )
-    
-    return balance
+    try:
+        transaction = CreditTransaction(
+            user_id=credit_data.user_id,
+            type='debit',
+            amount=credit_data.amount
+        )
+        
+        db.add(transaction)
+        db.commit()
+        db.refresh(transaction)
+        
+        balance = CreditsBalance(
+            user_id=credit_data.user_id,
+            total_credits=get_credits_balance(credit_data.user_id, db)
+        )
+        
+        return balance
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error removing credits: {str(e)}"
+        )
 
-@router.get("/balance/{user_id}", response_model=CreditsBalance)
-def get_balance(user_id: int, db: Session = Depends(get_db)):
-    # Verify user exists
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    balance = CreditsBalance(
-        user_id=user_id,
-        total_credits=get_credits_balance(user_id, db)
-    )
-    
-    return balance
+    @router.get("/balance/{user_id}", response_model=CreditsBalance)
+    def get_balance(user_id: int, db: Session = Depends(get_db)):
+        # Verify user exists
+        user = db.query(User).filter(User.id == user_id).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        balance = CreditsBalance(
+            user_id=user_id,
+            total_credits=get_credits_balance(user_id, db)
+        )
+        
+        return balance
 
 @router.get("/history/{user_id}", response_model=CreditsList)
 def get_history(user_id: int, skip: int = Query(0, ge=0), limit: int = Query(10, ge=1), db: Session = Depends(get_db)):

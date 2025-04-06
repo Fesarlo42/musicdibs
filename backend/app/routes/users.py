@@ -32,19 +32,26 @@ def get_user(user_id: int, response: Response, db: Session = Depends(get_db)):
 @router.post("/", response_model=User, status_code=201)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
     # Convert Pydantic UserCreate to SQLAlchemy UserModel
-    db_user = UserModel(
-        email = user.email,
-        first_name = user.first_name,
-        last_name = user.last_name,
-        password=hash_password(user.password),
-        role = user.role,
-    )
-    
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
+    try:
+        db_user = UserModel(
+            email = user.email,
+            first_name = user.first_name,
+            last_name = user.last_name,
+            password=hash_password(user.password),
+            role = user.role,
+        )
+        
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
 
-    return User.from_orm(db_user)
+        return User.from_orm(db_user)
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error creating new user: {str(e)}"
+        )
 
 @router.put("/{user_id}", response_model=Union[User, str])
 def update_user(user_id: int, updated_user: UserUpdate, response: Response, db: Session = Depends(get_db)): 
