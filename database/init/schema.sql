@@ -59,7 +59,6 @@ CREATE TABLE IF NOT EXISTS files (
 -- Conversation with AI
 CREATE TABLE IF NOT EXISTS conversations (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
     project_id INT NOT NULL,
     title VARCHAR(255) NOT NULL,
     purpose VARCHAR(255) NOT NULL,
@@ -68,8 +67,6 @@ CREATE TABLE IF NOT EXISTS conversations (
     mood VARCHAR(50) NOT NULL,
     status ENUM('in_progress', 'completed', 'archived') DEFAULT 'in_progress',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) 
-        ON DELETE CASCADE,
     FOREIGN KEY (project_id) REFERENCES projects(id) 
         ON DELETE CASCADE
 );
