@@ -1,1 +1,36 @@
-.env
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual environment
+venv/
+.env/
+.env.*
+
+# VSCode
+.vscode/
+
+# macOS
+.DS_Store
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# MyPy
+.mypy_cache/
+
+# Logs
+*.log
+
+# IDEs
+.idea/
+
+# Build
+dist/
+build/
+*.egg-info/
