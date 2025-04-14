@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional, Literal
+from typing import Optional, Literal, List
 from datetime import datetime
 
 # User models
@@ -31,3 +31,11 @@ class UserInDB(UserBase):
 
 class User(UserInDB):
     pass
+
+# TODO: implementar eso en el get users
+class UsersList(BaseModel):
+    total: int
+    users: List[UserInDB]
+    page: int
+    limit: int
+    has_more: bool

@@ -1,14 +1,14 @@
-from fastapi import APIRouter, Response, Depends, HTTPException
+from fastapi import APIRouter, Response, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List, Union
 
 from app.database import get_db
 
 # pydantic models
-from app.schemas import User, UserCreate, UserUpdate
+from app.schemas import User, UserCreate, UserUpdate, Project, ProjectList
 
 # sqlalchemy models
-from app.models import User as UserModel
+from app.models import User as UserModel, Project as ProjectModel
 
 # utils
 from app.utils.auth import hash_password
@@ -64,20 +64,57 @@ def update_user(user_id: int, updated_user: UserUpdate, response: Response, db: 
     for key, value in user_dict.items():
         setattr(user, key, value)
     
-    db.add(user)
-    db.commit()
-    db.refresh(user)
+    try:
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        return user
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error updating user: {str(e)}"
+        )
 
-    return user
 
 @router.delete("/{user_id}")
 def delete_user(user_id: int, response: Response, db: Session = Depends(get_db)): 
-    # find the user by id and update it or 404 if it doesnt exist
+    # find the user by id or 404 if it doesnt exist
     user = db.get(UserModel, user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     
-    db.delete(user)
-    db.commit()
+    try:
+        db.delete(user)
+        db.commit()
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error deleting user: {str(e)}"
+        )
 
     return Response(status_code = 200)
+
+
+@router.get("/{user_id}/projects", response_model=ProjectList)
+def get_projects(user_id: int, skip: int = Query(0, ge=0), limit: int = Query(10, ge=1), db: Session = Depends(get_db)):
+    # Verify user exists
+    user = db.query(UserModel).filter(UserModel.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Get projects
+    all_projects = db.query(ProjectModel).filter(ProjectModel.user_id == user_id)
+    total = all_projects.count()
+
+    db_projects = all_projects.order_by(ProjectModel.updated_at.desc()).offset(skip).limit(limit).all()
+    projects = [Project.from_orm(project) for project in db_projects]
+
+    return ProjectList(
+        total=total,
+        projects=projects,
+        page=(skip // limit) + 1,
+        limit=limit,
+        has_more=(skip + limit) < total
+    )
