@@ -62,9 +62,10 @@ class File(Base):
     
     id = Column(Integer, primary_key=True, autoincrement=True)
     project_id = Column(Integer, ForeignKey('projects.id', ondelete='CASCADE'), nullable=False)
-    path = Column(String(255), nullable=False)
+    object_key = Column(String(255), nullable=False)
     name = Column(String(255), nullable=False)
     uploaded_at = Column(DateTime, default=func.current_timestamp())
+    origin = Column(Enum('user_upload', 'ai_generated', 'receipt'), nullable=False)
     
     project = relationship("Project", back_populates="files")
 
