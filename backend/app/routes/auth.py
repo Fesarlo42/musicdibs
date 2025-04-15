@@ -9,8 +9,8 @@ from app.schemas import UserLogin
 # sqlalchemy models
 from app.models.models import User
 
-# utils
-from app.utils.auth import verify_password
+# services
+from app.services.auth_services import verify_password
 
 router = APIRouter()
 

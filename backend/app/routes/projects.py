@@ -70,23 +70,6 @@ def update_project(project_id: int, updated_project: ProjectUpdate, db: Session 
         )
     
     update_data = updated_project.dict(exclude_unset=True)
-    
-    # Handle project_genres separately if it exists in the update data
-    if "project_genres" in update_data:
-        genre_ids = update_data.pop("project_genres")  # Remove from update_data to handle separately
-        
-        # Delete existing genre relationships
-        db.query(ProjectGenreModel).filter(ProjectGenreModel.project_id == project_id).delete()
-        
-        # Create new genre relationships
-        for genre_id in genre_ids:
-            db_project_genre = ProjectGenreModel(
-                project_id=project_id,
-                genre_id=genre_id
-            )
-            db.add(db_project_genre)
-    
-    # Update regular fields
     for key, value in update_data.items():
         setattr(db_project, key, value)
     
@@ -102,7 +85,7 @@ def update_project(project_id: int, updated_project: ProjectUpdate, db: Session 
             detail=f"Error updating project: {str(e)}"
         )
 
-@router.delete("/{project_id}")
+@router.delete("/{project_id}", status_code=204)
 def delete_project(project_id: int,  response: Response, db: Session = Depends(get_db)):
     # find the project by id or 404 if it doesnt exist
     project = db.query(ProjectModel).filter(ProjectModel.id == project_id).first()

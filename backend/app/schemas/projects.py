@@ -3,7 +3,7 @@ from datetime import datetime
 from pydantic import BaseModel
 
 from .project_genres import ProjectGenre
-from .files import File
+from .files import FileResponse
 from .conversations import Conversation
 from .registrations import Registration
 
@@ -21,10 +21,6 @@ class ProjectCreate(ProjectBase):
 class ProjectUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
-    project_genres: Optional[List[int]] = None
-    files: Optional[List[File]] = None
-    conversations: Optional[List[Conversation]] = None
-    registrations: Optional[List[Registration]] = None
 
 
 class Project(ProjectBase):
@@ -32,7 +28,7 @@ class Project(ProjectBase):
     created_at: datetime
     updated_at: datetime
     project_genres: List[ProjectGenre] = []
-    files: List[File] = []
+    files: List[FileResponse] = []
     conversations: List[Conversation] = []
     registrations: List[Registration] = []
 

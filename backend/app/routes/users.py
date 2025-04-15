@@ -10,8 +10,8 @@ from app.schemas import User, UserCreate, UserUpdate, Project, ProjectList
 # sqlalchemy models
 from app.models import User as UserModel, Project as ProjectModel
 
-# utils
-from app.utils.auth import hash_password
+# services
+from app.services.auth_services import hash_password
 
 router = APIRouter()
 
@@ -77,7 +77,7 @@ def update_user(user_id: int, updated_user: UserUpdate, response: Response, db: 
         )
 
 
-@router.delete("/{user_id}")
+@router.delete("/{user_id}", status_code=204)
 def delete_user(user_id: int, response: Response, db: Session = Depends(get_db)): 
     # find the user by id or 404 if it doesnt exist
     user = db.get(UserModel, user_id)
