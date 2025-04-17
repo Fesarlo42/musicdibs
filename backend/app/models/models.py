@@ -75,7 +75,6 @@ class Conversation(Base):
     
     id = Column(Integer, primary_key=True, autoincrement=True)
     project_id = Column(Integer, ForeignKey('projects.id', ondelete='CASCADE'), nullable=False)
-    title = Column(String(255), nullable=False)
     purpose = Column(String(255), nullable=False)
     tempo = Column(String(50), nullable=False)
     key_signature = Column(String(50), nullable=False)

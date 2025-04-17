@@ -6,7 +6,6 @@ from .messages import Message
 
 # conversations models
 class ConversationBase(BaseModel):
-    title: str
     purpose: str
     tempo: str
     key_signature: str
@@ -19,7 +18,6 @@ class ConversationCreate(ConversationBase):
 
 
 class ConversationUpdate(BaseModel):
-    title: Optional[str] = None
     purpose: Optional[str] = None
     tempo: Optional[str] = None
     key_signature: Optional[str] = None

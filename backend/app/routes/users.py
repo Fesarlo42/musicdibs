@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Response, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from typing import List, Union
+import httpx
 
 from app.database import get_db
 
@@ -12,6 +14,8 @@ from app.models import User as UserModel, Project as ProjectModel
 
 # services
 from app.services.auth_services import hash_password
+from app.services.ibs_services import post_signature, put_signature, get_signature, delete_signature
+
 
 router = APIRouter()
 
@@ -84,6 +88,10 @@ def delete_user(user_id: int, response: Response, db: Session = Depends(get_db))
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     
+    # deletes user ibs signature if there is any
+    if user.ibs_sig:
+        delete_signature(user.ibs_sig)
+
     try:
         db.delete(user)
         db.commit()
@@ -118,3 +126,48 @@ def get_projects(user_id: int, skip: int = Query(0, ge=0), limit: int = Query(10
         limit=limit,
         has_more=(skip + limit) < total
     )
+
+
+@router.post("/{user_id}/signature", status_code=200)
+async def make_signature(user_id: int, response: Response, db: Session = Depends(get_db) ):
+    # find if the user exists
+    user = db.get(UserModel, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if user.ibs_sig:
+        try: 
+            sig_data = await get_signature(user.ibs_sig)
+
+            if sig_data["status"] == "success":
+                raise HTTPException(status_code=412, detail="Cannot proceed: user already has an active IBS signature.")
+
+            try:
+                data = await put_signature(user.ibs_sig)
+                return data
+            except httpx.HTTPError as e:
+                raise HTTPException(status_code=500, detail=f"External API error: {str(e)}")
+
+        except httpx.HTTPError as e:
+            raise HTTPException(status_code=500, detail=f"External API error: {str(e)}")
+
+    params = {
+        "signature_name": f"{user.id}"
+    }
+
+    try:
+        data = await post_signature(params)
+
+        signature_id = data.get("signature_id")
+
+        if not signature_id:
+            raise HTTPException(status_code=500, detail="Missing signature_id in response")
+
+        # Update user record
+        user.ibs_sig = signature_id
+        db.commit()
+        db.refresh(user)
+
+        return data
+    except httpx.HTTPError as e:
+        raise HTTPException(status_code=500, detail=f"External API error: {str(e)}")
