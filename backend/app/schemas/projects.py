@@ -4,8 +4,6 @@ from pydantic import BaseModel
 
 from .project_genres import ProjectGenre
 from .files import FileResponse
-from .conversations import Conversation
-from .registrations import Registration
 
 # projects models
 class ProjectBase(BaseModel):
@@ -29,8 +27,6 @@ class Project(ProjectBase):
     updated_at: datetime
     project_genres: List[ProjectGenre] = []
     files: List[FileResponse] = []
-    conversations: List[Conversation] = []
-    registrations: List[Registration] = []
 
     class Config:
         from_attributes = True

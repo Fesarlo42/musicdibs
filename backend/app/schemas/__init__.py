@@ -7,5 +7,5 @@ from .project_genres import ProjectGenre, ProjectGenreCreate
 from .files import FileCreate, FileResponse
 from .messages import Message, MessageCreate
 from .conversations import Conversation, ConversationCreate, ConversationUpdate
-from .registrations import Registration, RegistrationCreate
+from .registrations import RegistrationCreate, RegistrationResponse, RegistrationDetailResponse
 from .projects import ProjectCreate, ProjectUpdate, Project, ProjectResponse, ProjectList

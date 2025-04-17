@@ -1,19 +1,20 @@
-from datetime import datetime
 from pydantic import BaseModel
+from datetime import datetime
+from typing import Dict, Any
 
-# blockhain registration models
 class RegistrationBase(BaseModel):
-    ibs_id: str
-
+    project_id: int
 
 class RegistrationCreate(RegistrationBase):
-    pass
+    title: str
 
-
-class Registration(RegistrationBase):
+class RegistrationResponse(RegistrationBase):
     id: int
-    project_id: int
+    ibs_id: str
     registered_at: datetime
-
+    
     class Config:
         from_attributes = True
+
+class RegistrationDetailResponse(RegistrationResponse):
+    evidence_details: Dict[str, Any]
