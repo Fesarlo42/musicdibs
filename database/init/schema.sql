@@ -61,7 +61,6 @@ CREATE TABLE IF NOT EXISTS files (
 CREATE TABLE IF NOT EXISTS conversations (
     id INT AUTO_INCREMENT PRIMARY KEY,
     project_id INT NOT NULL,
-    title VARCHAR(255) NOT NULL,
     purpose VARCHAR(255) NOT NULL,
     tempo VARCHAR(50) NOT NULL,
     key_signature VARCHAR(50) NOT NULL,
