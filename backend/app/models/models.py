@@ -104,6 +104,7 @@ class Registration(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     project_id = Column(Integer, ForeignKey('projects.id', ondelete='CASCADE'), nullable=False)
     ibs_id = Column(String(255), nullable=False)
+    file_checksum = Column(String(255))
     registered_at = Column(DateTime, default=func.current_timestamp())
     
     project = relationship("Project", back_populates="registrations")

@@ -86,6 +86,9 @@ CREATE TABLE IF NOT EXISTS messages (
 CREATE TABLE IF NOT EXISTS registrations (
     id INT AUTO_INCREMENT PRIMARY KEY,
     project_id INT NOT NULL,
+    ibs_id VARCHAR(255) NOT NULL,
+    file_checksum VARCHAR(255),
+    registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
     FOREIGN KEY (project_id) REFERENCES projects(id) 
         ON DELETE CASCADE
