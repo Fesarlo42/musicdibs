@@ -1,3 +1,4 @@
+# -----------------------
 # Python
 __pycache__/
 *.py[cod]
@@ -11,27 +12,46 @@ venv/
 .env.*
 **/.env
 
-# VSCode
-.vscode/
+# Logs
+*.log
 
-# macOS
-.DS_Store
+# Build artifacts
+dist/
+build/
+*.egg-info/
 
-# Pytest
+# Testing
 .pytest_cache/
 .coverage
 htmlcov/
 
-# MyPy
+# Type checking
 .mypy_cache/
 
-# Logs
-*.log
-
-# IDEs
+# IDEs and Editors
 .idea/
+.vscode/
+*.vscode/
 
-# Build
-dist/
-build/
-*.egg-info/
+# macOS
+.DS_Store
+
+# -----------------------
+# Node / Vite / Vue (frontend)
+
+# node_modules should never be committed
+/frontend/node_modules/
+
+# Vite cache
+/frontend/.vite/
+
+# Build output
+/frontend/dist/
+
+/frontend/.env
+/frontend/.env.*
+/frontend/npm-debug.log*
+
+# IDE temp files inside frontend
+/frontend/.DS_Store
+/frontend/.vscode/

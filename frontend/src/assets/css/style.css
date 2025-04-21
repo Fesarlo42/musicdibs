@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-display: swap;
+  font-family: "Georama";
+  font-stretch: 75% 125%;
+  font-style: normal;
+  font-weight: 100 900;
+  src: url("@/assets/fonts/Georama/Georama-VariableFont_wdth,wght.ttf")
+    format("truetype");
+}
+
+@font-face {
+  font-display: swap;
+  font-family: "Covered By Your Grace";
+  font-style: normal;
+  font-weight: 400;
+  src: url("@/assets/fonts/Covered_By_Your_Grace/CoveredByYourGrace-Regular.ttf")
+    format("truetype");
+}
+
+/* Custom synthwave theme overrides */
+[data-theme="synthwave"] {
+  --color-base-100: oklch(15% 0.09 281.288);
+  --color-base-200: oklch(20% 0.09 281.288);
+  --color-base-300: oklch(30% 0.09 281.288);
+  --color-base-content: oklch(96% 0.018 272.314);
+  --color-primary: oklch(0.65 0.2191 8.08);
+  --color-primary-content: oklch(28% 0.109 3.907);
+  --color-secondary: oklch(0.46 0.2007 299.55);
+  --color-secondary-content: oklch(89% 0.057 293.283);
+  --color-accent: oklch(0.65 0.2191 8.08);
+  --color-accent-content: oklch(28% 0.109 3.907);
+  --color-neutral: oklch(0.46 0.1669 265.76);
+  --color-neutral-content: oklch(89% 0.057 293.283);
+  --color-info: oklch(74% 0.16 232.661);
+  --color-info-content: oklch(29% 0.066 243.157);
+  --color-success: oklch(77% 0.152 181.912);
+  --color-success-content: oklch(27% 0.046 192.524);
+  --color-warning: oklch(90% 0.182 98.111);
+  --color-warning-content: oklch(42% 0.095 57.708);
+  --color-error: oklch(73.7% 0.121 32.639);
+  --color-error-content: oklch(23.501% 0.096 290.329);
+  --rounded-box: 2rem;
+  --rounded-btn: 2rem;
+  --rounded-badge: 2rem;
+  --animation-btn: 0.25s;
+  --animation-input: 0.25s;
+  --btn-focus-scale: 0.95;
+  --border-btn: 1px;
+  --tab-border: 1px;
+  --tab-radius: 0.5rem;
+  --radius-field: 2rem;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  overflow-x: hidden;
+  padding: 0;
+  width: 100%;
+}
+
+p {
+  @apply tracking-wide;
+}
+
+.bg-musicdibs {
+  background: linear-gradient(160deg, #7789c9, #2e3c87, #39205e, #0d0e20);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin: 0;
+  min-height: 100vh;
+}
+
+.musicdibs-shadow {
+  box-shadow: 16px 16px 0 0 theme("colors.primary");
+}
+
+.musicdibs-shadow-scondary {
+  box-shadow: 16px 16px 0 0 theme("colors.secondary");
+}
+
+.musicdibs-card {
+  @apply musicdibs-shadow rounded-xl bg-base-content p-5 text-base-200;
+}
+
+.musicdibs-card.secondary {
+  @apply musicdibs-shadow-scondary;
+}
+
+.musicdibs-card .card-body {
+  @apply p-0;
+}
+
+.musicdibs-card .card-title {
+  @apply font-bold uppercase text-primary;
+}
+
+.musicdibs-card.secondary .card-title {
+  @apply text-secondary;
+}
+
+.logo {
+  max-width: 100px;
+}
+
+.menu :where(li) {
+  justify-content: center;
+}
+
+.btn {
+  @apply uppercase;
+}
+
+.btn-link {
+  @apply transition-colors hover:text-primary;
+}
+
+.timeline > li {
+  flex-shrink: initial;
+}
+
+#instructions .timeline :where(hr) {
+  @apply bg-white opacity-80;
+  height: calc(0.15rem * 1);
+}
+
+.glass {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background-image: linear-gradient(45deg, #1b1d3f80, transparent);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
