@@ -33,7 +33,7 @@
         class="relative z-10 flex min-h-screen items-center justify-center text-center text-neutral-content"
       >
         <div class="max-w-4xl text-white">
-          <h1 class="font-grace mb-8 text-8xl tracking-wider">
+          <h1 class="mb-8 font-grace text-8xl tracking-wider">
             Tu musica, siempre tuya
           </h1>
           <h2 class="mb-5 text-pretty text-2xl/9">
@@ -51,8 +51,4 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "Hero",
-};
-</script>
+<script setup />

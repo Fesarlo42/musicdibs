@@ -1,7 +1,7 @@
 <template>
   <footer>
     <section class="pt-[150px]">
-      <h2 class="font-grace text-center text-7xl tracking-wider">
+      <h2 class="text-center font-grace text-7xl tracking-wider">
         Empieza ahora gratis
       </h2>
       <div class="flex justify-center">
@@ -98,11 +98,7 @@
   </footer>
 </template>
 
-<script>
-export default {
-  name: "Footer",
-};
-</script>
+<script setup />
 
 <style scoped>
 footer {

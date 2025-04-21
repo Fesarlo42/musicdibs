@@ -19,8 +19,4 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "DashboardUser",
-};
-</script>
+<script setup></script>

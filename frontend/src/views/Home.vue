@@ -2,7 +2,7 @@
   <div class="p-0">
     <Hero />
     <section class="mt-10 pt-10">
-      <h2 class="font-grace text-center text-6xl tracking-wider">
+      <h2 class="text-center font-grace text-6xl tracking-wider">
         Tu creas, nosotros protegemos
       </h2>
     </section>
@@ -11,7 +11,7 @@
     </section>
     <section class="my-10 py-10">
       <div class="z-10 w-3/5 p-8 glass">
-        <h3 class="font-grace mb-6 text-center text-5xl/normal tracking-wider">
+        <h3 class="mb-6 text-center font-grace text-5xl/normal tracking-wider">
           Te ayudamos a proteger tus derechos de autor
         </h3>
         <p class="mb-3">
@@ -155,17 +155,9 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import Hero from "../components/Hero.vue";
 import Instructions from "../components/Instructions.vue";
-
-export default {
-  name: "Home",
-  components: {
-    Hero,
-    Instructions,
-  },
-};
 </script>
 
 <style scoped>

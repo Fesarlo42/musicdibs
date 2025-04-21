@@ -19,8 +19,4 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "Unauthorized",
-};
-</script>
+<script setup />

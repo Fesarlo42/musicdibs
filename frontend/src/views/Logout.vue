@@ -19,8 +19,4 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "Logout",
-};
-</script>
+<script setup></script>

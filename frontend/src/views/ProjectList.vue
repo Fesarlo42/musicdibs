@@ -19,8 +19,4 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "ProjectList",
-};
-</script>
+<script setup></script>

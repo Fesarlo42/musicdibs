@@ -82,8 +82,4 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "TopBar",
-};
-</script>
+<script setup />

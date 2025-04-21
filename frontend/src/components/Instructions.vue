@@ -107,8 +107,4 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "Instructions",
-};
-</script>
+<script setup />
