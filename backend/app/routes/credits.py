@@ -13,7 +13,6 @@ from app.models.models import CreditTransaction, User
 
 router = APIRouter()
 
-# function to get user credits balance
 def get_credits_balance(user_id: int, db: Session):
     # Check if user exists
     user = db.query(User).filter(User.id == user_id).first()

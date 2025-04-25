@@ -113,7 +113,7 @@ def delete_project(project_id: int,  response: Response, db: Session = Depends(g
 @router.post("/{project_id}/genres/{genre_id}", status_code=201)
 def add_genre_to_project(
     project_id: int, 
-    genre_id: int,  # Could also accept this as a body parameter
+    genre_id: int,
     db: Session = Depends(get_db)
 ):
     # Verify the project exists

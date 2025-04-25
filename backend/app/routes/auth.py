@@ -1,58 +1,52 @@
 # app/routers/auth.py
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 
 # pydantic models
-from app.schemas import UserLogin, Token
+from app.schemas import User
 
 # sqlalchemy models
-from app.models.models import User
+from app.models.models import User as UserModel
 
 # services
-from app.services.auth_services import verify_password, create_access_token, get_current_user
+from app.services.auth_services import verify_password
 
 router = APIRouter()
 
-@router.post("/login", response_model=Token)
-def login_for_access_token(
+@router.post("/login", response_model=User)
+def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
-    user = db.query(User).filter(User.email == form_data.username).first()
+    user = db.query(UserModel).filter(User.email == form_data.username).first()
     if not user or not verify_password(form_data.password, user.password):
         raise HTTPException(
             status_code=401,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
+            detail="Incorrect username or password"
         )
     
-    # Create access token
-    access_token = create_access_token(
-        data={"sub": str(user.id), "role": user.role}
-    )
-    
+    # Just return the user data
     return {
-        "access_token": access_token, 
-        "token_type": "bearer", 
-        "user_id": user.id, 
-        "role": user.role
+        "id": user.id,
+        "email": user.email,
+        "role": user.role,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "ibs_sig": user.ibs_sig,
     }
 
-@router.get("/me", response_model=dict, include_in_schema=False)
-async def get_current_user_info(current_user: dict = Depends(get_current_user)):
-    return current_user
-
-
-@router.get("/has-permission")
+@router.get("/{user_id}/has-permission")
 async def check_permission(
-    necessary_role: str, 
-    current_user: dict = Depends(get_current_user)
+    user_id: int, role: str, db: Session = Depends(get_db)
 ):
-    user_role = current_user.get("role")
+    user = db.get(UserModel, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
     
-    if user_role != necessary_role:
+    if user.role != role:
         raise HTTPException(
             status_code=403,
             detail="Permission denied"
