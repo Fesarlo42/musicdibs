@@ -92,6 +92,91 @@ async def registration_webhook(
             detail = f"Error processing webhook: {str(e)}"
         )
 
+@router.post("/verify-file", status_code=200)
+async def verify_file(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db)
+):
+    try:
+        # Read the file content
+        contents = await file.read()
+        
+        # Calculate SHA-512 checksum with base64 standard encoding
+        hash_obj = hashlib.sha512(contents)
+        file_checksum = base64.standard_b64encode(hash_obj.digest()).decode('utf-8')
+        
+        # Look for a registration with matching checksum
+        registration = db.query(RegistrationModel).filter(
+            RegistrationModel.file_checksum == file_checksum
+        ).first()
+        
+        if not registration:
+            return {
+                "status": "failure",
+                "message": "No matching registration found"
+            }
+        
+        # Get associated project
+        project = db.query(ProjectModel).filter(
+            ProjectModel.id == registration.project_id
+        ).first()
+        
+        if not project:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Project not found for registration {registration.id}"
+            )
+        
+        # Get user info
+        user = db.query(UserModel).filter(
+            UserModel.id == project.user_id
+        ).first()
+
+        if not user:
+            raise HTTPException(
+                status_code=404,
+                detail=f"User not found for registration {registration.id}"
+            )
+        
+        # Get registration prof download url
+        registration_file = db.get(FileModel).filter(
+            FileModel.project_id == project.id,
+            FileModel.origin == "receipt"
+        )
+
+        if registration_file is None:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Registration file not found for project {project.id}"
+            )
+        
+        # Generate presigned URL for the registration file
+        presigned_url = get_presigned_url(registration_file.object_key)
+
+
+        # Return basic project information
+        return {
+            "status": "success",
+            "registration_id": registration.id,
+            "registered_at": registration.registered_at,
+            "registration_proof": presigned_url,
+            "project": {
+                "id": project.id,
+                "name": project.name,
+                "author": f"{user.first_name} {user.last_name}",
+            }
+        }
+    
+    except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error verifying file: {str(e)}"
+        )
+    finally:
+        # Reset file pointer for potential reuse
+        await file.seek(0)
 
 @router.post("/{project_id}", response_model=RegistrationResponse, status_code=201)
 async def create_registration(
@@ -149,7 +234,7 @@ async def create_registration(
     user = db.get(UserModel, project.user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
-
+    
     # Prepare data for IBS API
     data = {
         "payload": {
@@ -192,75 +277,6 @@ async def create_registration(
             status_code=500,
             detail=f"Registration failed: {str(e)}"
         )
-
-
-@router.post("/verify-file", status_code=200)
-async def verify_file(
-    file: UploadFile = File(...),
-    db: Session = Depends(get_db)
-):
-    try:
-        # Read the file content
-        contents = await file.read()
-        
-        # Calculate SHA-512 checksum with base64 standard encoding
-        hash_obj = hashlib.sha512(contents)
-        file_checksum = base64.standard_b64encode(hash_obj.digest()).decode('utf-8')
-        
-        # Look for a registration with matching checksum
-        registration = db.query(RegistrationModel).filter(
-            RegistrationModel.file_checksum == file_checksum
-        ).first()
-        
-        if not registration:
-            raise HTTPException(
-                status_code=404,
-                detail="No matching registration found for this file"
-            )
-        
-        # Get associated project
-        project = db.query(ProjectModel).filter(
-            ProjectModel.id == registration.project_id
-        ).first()
-        
-        if not project:
-            raise HTTPException(
-                status_code=404,
-                detail=f"Project not found for registration {registration.id}"
-            )
-        
-        # Get user info
-        user = db.query(UserModel).filter(
-            UserModel.id == project.user_id
-        ).first()
-
-        if not user:
-            raise HTTPException(
-                status_code=404,
-                detail=f"User not found for registration {registration.id}"
-            )
-        
-        # Return basic project information
-        return {
-            "status": "success",
-            "registration_id": registration.id,
-            "registered_at": registration.registered_at,
-            "project": {
-                "id": project.id,
-                "name": f"{user.first_name} {user.last_name}",
-            }
-        }
-    
-    except Exception as e:
-        if isinstance(e, HTTPException):
-            raise e
-        raise HTTPException(
-            status_code=500,
-            detail=f"Error verifying file: {str(e)}"
-        )
-    finally:
-        # Reset file pointer for potential reuse
-        await file.seek(0)
 
 
 @router.get("/{project_id}", response_model=Dict[str, Any])
