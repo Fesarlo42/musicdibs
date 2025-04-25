@@ -1,26 +1,110 @@
 <template>
   <div class="p-4">
-    <h1 class="text-2xl font-bold">Verify</h1>
-    <div class="mt-4">
-      <button class="btn btn-primary">Primary Button</button>
-      <button class="btn btn-secondary ml-2">Secondary Button</button>
-      <button class="btn btn-accent ml-2">Accent Button</button>
-    </div>
-    <div class="mt-4">
-      <div class="musicdibs-card secondary w-96 bg-base-100">
-        <div class="card-body">
-          <h2 class="card-title">Card Title</h2>
+    <h1 class="text-2xl font-bold">Verificar obra</h1>
+    <section class="my-10 py-10">
+      <div class="musicdibs-card w-3/5 bg-base-100">
+        <div class="card-body" v-if="registrationsStore.verification">
+          <div v-if="registrationsStore.verification.status == 'failure'">
+            <h2 class="card-title">Lo sentimos</h2>
+            <p>
+              El archivo <strong>{{ fileName }}</strong> que has intentado
+              verificar no consta como registrado y certificado por nosotros.
+              También puede ser que este archivo NO sea el original que se
+              registró en su momento. Si quieres registrarlo, vete a tu panel
+              general o crea una cuenta gratis y registra esta y muchas otras
+              obras.
+            </p>
+          </div>
+          <FileFound
+            v-else
+            :registrationData="registrationsStore.verification"
+            :fileName="fileName"
+          />
+        </div>
+        <div class="card-body" v-else>
+          <h2 class="card-title">Subir archivo</h2>
           <p>
-            If this card has the synthwave theme colors, the theme is working!
+            Comprueba si una obra ya ha sido registrada previamente
+            en Musicdibs o no.
           </p>
+          <p>
+            Tan solo selecciona el archivo original que se ha registrado
+            con Musicdibs y pulsa “Verificar” para comprobarlo.
+          </p>
+          <div>
+            <fieldset class="fieldset my-6">
+              <input
+                type="file"
+                class="primary-content file-input file-input-primary block w-full"
+                @change="onFileChange"
+              />
+              <p class="label" :class="{ hidden: !showWarning }">
+                Por favor, selecciona un archivo antes de continuar.
+              </p>
+            </fieldset>
+            <button class="btn btn-primary" @click="handleUpload">
+              Verificar
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+      <div class="guxa flex justify-end">
+        <img
+          class="musicdibs-shadow max-w-xl rounded-3xl"
+          src="../assets/images/chico_guitarra.png"
+          alt="Una chico tocando la guitarra"
+        />
+      </div>
+    </section>
   </div>
 </template>
 
-<script>
-export default {
-  name: "Verify",
+<script setup>
+import { ref, watch } from "vue";
+
+import FileFound from "../components/FileFound.vue";
+import { useRegistrationsStore } from "../stores/registrations.js";
+
+const file = ref(null);
+const fileName = ref("");
+const showWarning = ref(false);
+const verificationResult = ref(null);
+
+const registrationsStore = useRegistrationsStore();
+
+watch(
+  () => registrationsStore.verification,
+  (newVal, oldVal) => {
+    console.log("Changed from", oldVal, "to", newVal);
+  },
+);
+const onFileChange = (event) => {
+  showWarning.value = false;
+  file.value = event.target.files[0];
+  fileName.value = file.value.name;
+};
+
+const handleUpload = async () => {
+  if (file.value === null) {
+    showWarning.value = true;
+    return;
+  }
+  try {
+    verificationResult.value = await registrationsStore.verifyFile(file.value);
+    console.log("Verification result:", verificationResult.value.status);
+  } catch (error) {
+    console.error("Error verifying file:", error);
+  }
 };
 </script>
+
+<style scoped>
+.guxa {
+  margin-top: -10rem;
+}
+
+.musicdibs-card {
+  z-index: 10;
+  position: relative;
+}
+</style>

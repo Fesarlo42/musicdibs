@@ -8,7 +8,7 @@
   font-stretch: 75% 125%;
   font-style: normal;
   font-weight: 100 900;
-  src: url("@/assets/fonts/Georama/Georama-VariableFont_wdth,wght.ttf")
+  src: url("../fonts/Georama/Georama-VariableFont_wdth,wght.ttf")
     format("truetype");
 }
 
@@ -17,7 +17,7 @@
   font-family: "Covered By Your Grace";
   font-style: normal;
   font-weight: 400;
-  src: url("@/assets/fonts/Covered_By_Your_Grace/CoveredByYourGrace-Regular.ttf")
+  src: url("../fonts/Covered_By_Your_Grace/CoveredByYourGrace-Regular.ttf")
     format("truetype");
 }
 
@@ -26,7 +26,8 @@
   --color-base-100: oklch(15% 0.09 281.288);
   --color-base-200: oklch(20% 0.09 281.288);
   --color-base-300: oklch(30% 0.09 281.288);
-  --color-base-content: oklch(96% 0.018 272.314);
+  /* --color-base-content: oklch(96% 0.018 272.314); */
+  --color-base-content: oklch(100% 0 0);
   --color-primary: oklch(0.65 0.2191 8.08);
   --color-primary-content: oklch(28% 0.109 3.907);
   --color-secondary: oklch(0.46 0.2007 299.55);
@@ -121,6 +122,9 @@ p {
 .btn-link {
   @apply transition-colors hover:text-primary;
 }
+.btn-ghost:hover {
+  @apply border-primary bg-primary text-white shadow-none;
+}
 
 .timeline > li {
   flex-shrink: initial;
@@ -138,4 +142,16 @@ p {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 1rem;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.file-input {
+  @apply bg-base-content;
+}
+
+input.primary-content {
+  color: var(--color-primary-content);
+}
+
+.btn[disabled] {
+  @apply bg-opacity-80 text-base-200;
 }

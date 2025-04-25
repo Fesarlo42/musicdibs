@@ -59,6 +59,7 @@
                   viewBox="0 0 24 24"
                   fill="currentColor"
                   class="size-5"
+                  stroke-width="2.5"
                 >
                   <path
                     fill-rule="evenodd"
