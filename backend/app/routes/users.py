@@ -7,7 +7,7 @@ import httpx
 from app.database import get_db
 
 # pydantic models
-from app.schemas import User, UserCreate, UserUpdate, Project, ProjectList, FileResponse
+from app.schemas import User, UserCreate, UserUpdate, Project, ProjectList, FileResponse, RegistrationResponse
 
 # sqlalchemy models
 from app.models import User as UserModel, Project as ProjectModel
@@ -120,6 +120,7 @@ def get_projects(user_id: int, skip: int = Query(0, ge=0), limit: int = Query(10
     
     projects = []
     for db_project in db_projects:
+        # Convert files to FileResponse objects
         file_responses = [
             FileResponse(
                 id=file.id,
@@ -132,6 +133,19 @@ def get_projects(user_id: int, skip: int = Query(0, ge=0), limit: int = Query(10
             for file in db_project.files
         ]
         
+        # Get registration if it exists
+        registration = None
+        if hasattr(db_project, 'registrations') and db_project.registrations:
+            reg = db_project.registrations[0]
+            registration = RegistrationResponse(
+                id=reg.id,
+                project_id=reg.project_id,
+                ibs_id=reg.ibs_id,
+                file_checksum=reg.file_checksum,
+                registered_at=reg.registered_at
+            )
+        
+        # Create Project object with files and registration
         project = Project(
             id=db_project.id,
             name=db_project.name,
@@ -140,7 +154,8 @@ def get_projects(user_id: int, skip: int = Query(0, ge=0), limit: int = Query(10
             created_at=db_project.created_at,
             updated_at=db_project.updated_at,
             project_genres=db_project.project_genres,
-            files=file_responses
+            files=file_responses,
+            registration=registration
         )
         projects.append(project)
 

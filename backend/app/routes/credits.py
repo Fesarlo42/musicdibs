@@ -13,8 +13,8 @@ from app.models.models import CreditTransaction, User
 
 router = APIRouter()
 
-def get_credits_balance(user_id: int, db: Session):
-    # Check if user exists
+@router.get("/balance/{user_id}", response_model=CreditsBalance)
+def get_credits_balance(user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -29,7 +29,10 @@ def get_credits_balance(user_id: int, db: Session):
         .filter(CreditTransaction.user_id == user_id, CreditTransaction.type == 'debit')\
         .scalar() or 0
     
-    return credits - debits   
+    return {
+        "user_id": user_id,
+        "total_credits": credits - debits
+    } 
     
 @router.post("/add", response_model=CreditsBalance)
 def add_credits(credit_data: CreditsAdd, db: Session = Depends(get_db)):
