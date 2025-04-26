@@ -14,12 +14,22 @@
               general o crea una cuenta gratis y registra esta y muchas otras
               obras.
             </p>
+            <button class="btn btn-primary btn-soft mt-5" @click="handleReset">
+              Verificar otro archivo
+            </button>
           </div>
-          <FileFound
-            v-else
-            :registrationData="registrationsStore.verification"
-            :fileName="fileName"
-          />
+          <div v-else>
+            <FileFound
+              :registrationData="registrationsStore.verification"
+              :fileName="fileName"
+            />
+            <button
+              class="btn btn-secondary btn-soft mt-5"
+              @click="handleReset"
+            >
+              Verificar otro archivo
+            </button>
+          </div>
         </div>
         <div class="card-body" v-else>
           <h2 class="card-title">Subir archivo</h2>
@@ -60,7 +70,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 
 import FileFound from "../components/FileFound.vue";
 import { useRegistrationsStore } from "../stores/registrations.js";
@@ -72,12 +82,17 @@ const verificationResult = ref(null);
 
 const registrationsStore = useRegistrationsStore();
 
+onMounted(() => {
+  registrationsStore.resetState();
+});
+
 watch(
   () => registrationsStore.verification,
   (newVal, oldVal) => {
     console.log("Changed from", oldVal, "to", newVal);
   },
 );
+
 const onFileChange = (event) => {
   showWarning.value = false;
   file.value = event.target.files[0];
@@ -95,6 +110,13 @@ const handleUpload = async () => {
   } catch (error) {
     console.error("Error verifying file:", error);
   }
+};
+
+const handleReset = () => {
+  file.value = null;
+  fileName.value = "";
+  showWarning.value = false;
+  registrationsStore.resetState();
 };
 </script>
 
