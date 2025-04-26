@@ -9,7 +9,7 @@
         <div>
           <img
             class="size-10 rounded-box"
-            src="../assets/images/musicdibs_icon_350.png"
+            src="../assets/images/certif_ok_morado.png"
           />
         </div>
         <div>
