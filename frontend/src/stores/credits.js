@@ -23,7 +23,7 @@ export const useCreditsStore = defineStore("credits", {
 
       try {
         const response = await api.get(`/credits/balance/${userId}`);
-        this.balance = response.data;
+        this.balance = response.data.total_credits;
         return this.balance;
       } catch (error) {
         this.error =
@@ -47,7 +47,7 @@ export const useCreditsStore = defineStore("credits", {
 
       try {
         const response = await api.post("/credits/add", userData);
-        this.balance = response.data;
+        this.balance = response.data.total_credits;
         return this.balance;
       } catch (error) {
         this.error = error.response?.data?.message || "Failed to add credits";
@@ -70,7 +70,7 @@ export const useCreditsStore = defineStore("credits", {
 
       try {
         const response = await api.post("/credits/remove", userData);
-        this.balance = response.data;
+        this.balance = response.data.total_credits;
         return this.balance;
       } catch (error) {
         this.error =

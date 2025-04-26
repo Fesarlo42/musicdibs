@@ -1,6 +1,6 @@
 <template>
   <div class="p-4">
-    <h1 class="text-2xl font-bold">Crear cuenta</h1>
+    <h1 class="text-2xl font-bold">Registro</h1>
     <section class="my-10 py-10">
       <div class="musicdibs-card secondary w-full bg-base-100 sm:w-3/5">
         <div class="card-body">
@@ -167,6 +167,7 @@ import { useRouter } from "vue-router";
 
 import { useUsersStore } from "../stores/users.js";
 import { useAuthStore } from "../stores/auth.js";
+import { useCreditsStore } from "../stores/credits.js";
 
 const email = ref("");
 const password = ref("");
@@ -178,6 +179,7 @@ const validationError = ref(false);
 
 const usersStore = useUsersStore();
 const authStore = useAuthStore();
+const creditsStore = useCreditsStore();
 const router = useRouter();
 
 const togglePassword = () => {
@@ -193,38 +195,49 @@ const isValidPassword = computed(() => password.value.length >= 8);
 
 const passwordsMatch = computed(() => password.value === confirmPassword.value);
 
-const handleSignup = async () => {
+const validateSignup = () => {
   if (firstName.value.length < 1) {
     validationError.value = "El nombre no puede estar vacío.";
-    return;
+    return false;
   }
   if (lastName.value.length < 1) {
     validationError.value = "El apellido no puede estar vacío.";
-    return;
+    return false;
   }
   if (!isValidEmail.value) {
     validationError.value = "El correo electrónico no es valido.";
-    return;
+    return false;
   }
   if (!isValidPassword.value) {
     validationError.value =
       "La contraseña es obligatoria y debe tener al menos 8 caracteres.";
-    return;
+    return false;
   }
 
   if (!passwordsMatch.value) {
     validationError.value = "Las contraseñas no coinciden.";
+    return false;
+  }
+
+  return true;
+};
+
+const handleSignup = async () => {
+  if (!validateSignup()) {
     return;
   }
 
   try {
-    await usersStore.createUser({
+    const userData = await usersStore.createUser({
       email: email.value,
       password: password.value,
       first_name: firstName.value,
       last_name: lastName.value,
       role: "user",
     });
+
+    // Gie user 5 credits after signup
+    await creditsStore.addCredits(userData.id, 5);
 
     // login user after signup
     await authStore.login({
