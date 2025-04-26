@@ -152,7 +152,7 @@ const handleLogin = async () => {
       return router.push("/dashboard_admin");
     }
 
-    return router.push("/dashboard");
+    router.push("/dashboard");
   } catch (error) {
     console.error("Error loging in:", error);
   }
