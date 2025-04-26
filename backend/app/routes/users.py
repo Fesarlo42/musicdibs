@@ -138,6 +138,8 @@ def get_projects(user_id: int, skip: int = Query(0, ge=0), limit: int = Query(10
         if hasattr(db_project, 'registrations') and db_project.registrations:
             reg = db_project.registrations[0]
             registration = RegistrationResponse(
+                id=reg.id,
+                project_id=reg.project_id,
                 ibs_id=reg.ibs_id,
                 registered_at=reg.registered_at
             )
