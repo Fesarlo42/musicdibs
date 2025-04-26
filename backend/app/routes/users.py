@@ -7,7 +7,7 @@ import httpx
 from app.database import get_db
 
 # pydantic models
-from app.schemas import User, UserCreate, UserUpdate, Project, ProjectList
+from app.schemas import User, UserCreate, UserUpdate, Project, ProjectList, FileResponse
 
 # sqlalchemy models
 from app.models import User as UserModel, Project as ProjectModel
@@ -117,7 +117,32 @@ def get_projects(user_id: int, skip: int = Query(0, ge=0), limit: int = Query(10
     total = all_projects.count()
 
     db_projects = all_projects.order_by(ProjectModel.updated_at.desc()).offset(skip).limit(limit).all()
-    projects = [Project.from_orm(project) for project in db_projects]
+    
+    projects = []
+    for db_project in db_projects:
+        file_responses = [
+            FileResponse(
+                id=file.id,
+                name=file.name,
+                origin=file.origin,
+                project_id=file.project_id,
+                object_key=file.object_key,
+                uploaded_at=file.uploaded_at
+            ) 
+            for file in db_project.files
+        ]
+        
+        project = Project(
+            id=db_project.id,
+            name=db_project.name,
+            description=db_project.description,
+            user_id=db_project.user_id,
+            created_at=db_project.created_at,
+            updated_at=db_project.updated_at,
+            project_genres=db_project.project_genres,
+            files=file_responses
+        )
+        projects.append(project)
 
     return ProjectList(
         total=total,
@@ -126,7 +151,6 @@ def get_projects(user_id: int, skip: int = Query(0, ge=0), limit: int = Query(10
         limit=limit,
         has_more=(skip + limit) < total
     )
-
 
 @router.post("/{user_id}/signature", status_code=200)
 async def make_signature(user_id: int, response: Response, db: Session = Depends(get_db) ):
@@ -146,10 +170,10 @@ async def make_signature(user_id: int, response: Response, db: Session = Depends
                 data = await put_signature(user.ibs_sig)
                 return data
             except httpx.HTTPError as e:
-                raise HTTPException(status_code=500, detail=f"External API error: {str(e)}")
+                raise HTTPException(status_code=502, detail=f"External API error: {str(e)}")
 
         except httpx.HTTPError as e:
-            raise HTTPException(status_code=500, detail=f"External API error: {str(e)}")
+            raise HTTPException(status_code=502, detail=f"External API error: {str(e)}")
 
     params = {
         "signature_name": f"{user.id}"
@@ -171,3 +195,23 @@ async def make_signature(user_id: int, response: Response, db: Session = Depends
         return data
     except httpx.HTTPError as e:
         raise HTTPException(status_code=500, detail=f"External API error: {str(e)}")
+    
+@router.get("/{user_id}/signature", status_code=200)
+async def get_signature(user_id: int, response: Response, db: Session = Depends(get_db) ):
+    # find if the user exists
+    user = db.get(UserModel, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if not user.ibs_sig:
+        return {
+            "status": "not_found",
+            "message": "User does not have an IBS signature."
+        }
+    
+    try: 
+        ibs_response = await get_signature(user.ibs_sig)
+        return ibs_response
+
+    except httpx.HTTPError as e:
+        raise HTTPException(status_code=502, detail=f"External API error: {str(e)}")

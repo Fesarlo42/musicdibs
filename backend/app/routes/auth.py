@@ -41,7 +41,7 @@ def login(
         "created_at": user.created_at
     }
 
-@router.get("/{user_id}/has-permission")
+@router.get("/{user_id}/has-permission", status_code=200)
 async def check_permission(
     user_id: int, role: str, db: Session = Depends(get_db)
 ):
@@ -50,9 +50,6 @@ async def check_permission(
         raise HTTPException(status_code=404, detail="User not found")
     
     if user.role != role:
-        raise HTTPException(
-            status_code=403,
-            detail="Permission denied"
-        )
+        return {"has_permission": False}
     
     return {"has_permission": True}
