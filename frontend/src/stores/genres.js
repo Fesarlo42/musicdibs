@@ -30,9 +30,6 @@ export const useGenresStore = defineStore("genres", {
 
     // Create a new genre
     async createGenre(genreData) {
-      const authStore = useAuthStore();
-      if (!authStore.isLoggedIn) return null;
-
       this.isLoading = true;
       this.error = null;
 
@@ -57,9 +54,6 @@ export const useGenresStore = defineStore("genres", {
 
     // Delete a genre
     async deleteGenre(genreId) {
-      const authStore = useAuthStore();
-      if (!authStore.isLoggedIn) return false;
-
       this.isLoading = true;
       this.error = null;
 

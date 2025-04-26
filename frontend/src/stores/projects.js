@@ -25,9 +25,6 @@ export const useProjectsStore = defineStore("projects", {
   actions: {
     // Get all user projects with optional filtering and pagination
     async fetchProjects(params = {}) {
-      const authStore = useAuthStore();
-      if (!authStore.isLoggedIn) return;
-
       this.isLoading = true;
       this.error = null;
 
@@ -74,9 +71,6 @@ export const useProjectsStore = defineStore("projects", {
 
     // Get a specific project by ID
     async fetchProjectById(id) {
-      const authStore = useAuthStore();
-      if (!authStore.isLoggedIn) return null;
-
       this.isLoading = true;
       this.error = null;
 
@@ -104,9 +98,6 @@ export const useProjectsStore = defineStore("projects", {
 
     // Create a new project
     async createProject(projectData) {
-      const authStore = useAuthStore();
-      if (!authStore.isLoggedIn) return null;
-
       this.isLoading = true;
       this.error = null;
 
@@ -134,9 +125,6 @@ export const useProjectsStore = defineStore("projects", {
 
     // Update an existing project
     async updateProject(id, projectData) {
-      const authStore = useAuthStore();
-      if (!authStore.isLoggedIn) return null;
-
       this.isLoading = true;
       this.error = null;
 
@@ -169,9 +157,6 @@ export const useProjectsStore = defineStore("projects", {
 
     // Delete a project
     async deleteProject(id) {
-      const authStore = useAuthStore();
-      if (!authStore.isLoggedIn) return false;
-
       this.isLoading = true;
       this.error = null;
 
@@ -203,9 +188,6 @@ export const useProjectsStore = defineStore("projects", {
 
     // Add a genre to a project
     async addGenreToProject(projectId, genreId) {
-      const authStore = useAuthStore();
-      if (!authStore.isLoggedIn) return false;
-
       this.isLoading = true;
       this.error = null;
 
@@ -229,9 +211,6 @@ export const useProjectsStore = defineStore("projects", {
 
     // Remove a genre from a project
     async removeGenreFromProject(projectId, genreId) {
-      const authStore = useAuthStore();
-      if (!authStore.isLoggedIn) return false;
-
       this.isLoading = true;
       this.error = null;
 
@@ -255,9 +234,6 @@ export const useProjectsStore = defineStore("projects", {
 
     // Upload a file to a project
     async uploadProjectFile(projectId, file) {
-      const authStore = useAuthStore();
-      if (!authStore.isLoggedIn) return null;
-
       this.isLoading = true;
       this.error = null;
 
@@ -293,9 +269,6 @@ export const useProjectsStore = defineStore("projects", {
 
     // Delete a project file
     async deleteProjectFile(fileId) {
-      const authStore = useAuthStore();
-      if (!authStore.isLoggedIn) return false;
-
       this.isLoading = true;
       this.error = null;
 
@@ -320,9 +293,6 @@ export const useProjectsStore = defineStore("projects", {
 
     // Get download URL for a file
     async downloadFile(fileId) {
-      const authStore = useAuthStore();
-      if (!authStore.isLoggedIn) return null;
-
       this.isLoading = true;
       this.error = null;
 
@@ -353,9 +323,6 @@ export const useProjectsStore = defineStore("projects", {
 
     // Get all files for a project
     async fetchProjectFiles(projectId) {
-      const authStore = useAuthStore();
-      if (!authStore.isLoggedIn) return [];
-
       this.isLoading = true;
       this.error = null;
 

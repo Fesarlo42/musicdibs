@@ -18,9 +18,6 @@ export const useCreditsStore = defineStore("credits", {
   actions: {
     // Get user's credit balance
     async fetchBalance(userId) {
-      const authStore = useAuthStore();
-      if (!authStore.isLoggedIn) return null;
-
       this.isLoading = true;
       this.error = null;
 
@@ -39,9 +36,11 @@ export const useCreditsStore = defineStore("credits", {
     },
 
     // Add credits to user account
-    async addCredits(userData) {
-      const authStore = useAuthStore();
-      if (!authStore.isLoggedIn) return null;
+    async addCredits(user_id, credits) {
+      const userData = {
+        user_id: user_id,
+        amount: credits,
+      };
 
       this.isLoading = true;
       this.error = null;
@@ -60,9 +59,11 @@ export const useCreditsStore = defineStore("credits", {
     },
 
     // Remove credits from user account
-    async removeCredits(userData) {
-      const authStore = useAuthStore();
-      if (!authStore.isLoggedIn) return null;
+    async removeCredits(user_id, credits) {
+      const userData = {
+        user_id: user_id,
+        amount: credits,
+      };
 
       this.isLoading = true;
       this.error = null;
@@ -83,9 +84,6 @@ export const useCreditsStore = defineStore("credits", {
 
     // Get transaction history for a user
     async fetchTransactionHistory(userId, page = 1, limit = 10) {
-      const authStore = useAuthStore();
-      if (!authStore.isLoggedIn) return null;
-
       this.isLoading = true;
       this.error = null;
 

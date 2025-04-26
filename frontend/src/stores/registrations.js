@@ -13,9 +13,6 @@ export const useRegistrationsStore = defineStore("registrations", {
   actions: {
     // Create a registration for a project
     async createRegistration(projectId) {
-      const authStore = useAuthStore();
-      if (!authStore.isLoggedIn) return null;
-
       this.isLoading = true;
       this.error = null;
 
@@ -36,9 +33,6 @@ export const useRegistrationsStore = defineStore("registrations", {
 
     // Get registration details for a project
     async getRegistration(projectId) {
-      const authStore = useAuthStore();
-      if (!authStore.isLoggedIn) return null;
-
       this.isLoading = true;
       this.error = null;
 
