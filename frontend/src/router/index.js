@@ -122,12 +122,8 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title || "Musicdibs";
 
-  /*
-  const token = localStorage.getItem("access_token");
-  const userData = JSON.parse(localStorage.getItem("user") || "{}");
-
-  const isAuthenticated = !!token;
-  const userRole = userData.role;
+  const userData = JSON.parse(sessionStorage.getItem("user"));
+  const userRole = userData?.role;
 
   const protectedRoutes = [
     "/dashboard",
@@ -138,7 +134,7 @@ router.beforeEach((to, from, next) => {
   const adminRoutes = ["/dashboard_admin", "/manage_users"];
 
   if (adminRoutes.includes(to.path)) {
-    if (!isAuthenticated) {
+    if (!userData) {
       return next("/login");
     }
 
@@ -148,24 +144,18 @@ router.beforeEach((to, from, next) => {
   }
 
   if (protectedRoutes.includes(to.path)) {
-    if (!isAuthenticated) {
+    if (!userData) {
       return next("/login");
     }
   }
 
-  if (to.path === "/logout") {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("user");
-    return next("/login");
-  }
-
-  if ((to.path === "/login" || to.path === "/signup") && isAuthenticated) {
-  if (userRole == "admin") {
+  if ((to.path === "/login" || to.path === "/signup") && userData) {
+    if (userRole == "admin") {
       return next("/dashboard_admin");
     }
     return next("/dashboard");
   }
-    */
+
   next();
 });
 

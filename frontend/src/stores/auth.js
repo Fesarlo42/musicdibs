@@ -1,21 +1,22 @@
 import { defineStore } from "pinia";
-import axios from "axios";
+import api from "../api/axios.js";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null,
-    isAuthLoading: false,
-    authError: null,
+    isLoading: false,
+    error: null,
     isAuthenticated: false,
     permission: false,
   }),
 
   actions: {
-    // Initialize store from localStorage on app start
+    // Initialize store from sessionStorage on app start
     initializeAuth() {
+      console.log("Initializing auth store...");
       try {
-        const user = JSON.parse(localStorage.getItem("user"));
-
+        const rawUser = sessionStorage.getItem("user");
+        const user = JSON.parse(rawUser);
         if (user) {
           this.setAuthData(user);
         }
@@ -30,7 +31,7 @@ export const useAuthStore = defineStore("auth", {
       this.isAuthenticated = true;
       this.error = null;
 
-      localStorage.setItem("user", JSON.stringify(user));
+      sessionStorage.setItem("user", JSON.stringify(user));
     },
 
     // Clear authentication data
@@ -38,7 +39,7 @@ export const useAuthStore = defineStore("auth", {
       this.user = null;
       this.isAuthenticated = false;
 
-      localStorage.removeItem("user");
+      sessionStorage.removeItem("user");
     },
 
     // Login action
@@ -48,10 +49,10 @@ export const useAuthStore = defineStore("auth", {
 
       try {
         const formData = new URLSearchParams();
-        formData.append("username", credentials.email);
+        formData.append("username", credentials.username);
         formData.append("password", credentials.password);
 
-        const response = await axios.post("/auth/login", formData, {
+        const response = await api.post("/auth/login", formData, {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
           },
@@ -62,7 +63,13 @@ export const useAuthStore = defineStore("auth", {
         this.setAuthData(userData);
         return userData;
       } catch (error) {
-        this.error = error.response?.data?.message || "Login failed";
+        if (error.response?.status === 401) {
+          this.error = "Correo electrónico o contraseña incorrectos";
+        } else {
+          this.error =
+            `${error.response?.status} ${error.response?.data?.message}` ||
+            "Login failed";
+        }
         console.error("Login error:", error);
         throw error;
       } finally {
@@ -75,11 +82,12 @@ export const useAuthStore = defineStore("auth", {
       if (!this.user) return false;
 
       try {
-        const response = await axios.get(
+        const response = await api.get(
           `/auth/${this.user.id}/has-permission?role=${requiredRole}`,
         );
 
-        return !!response.data.has_permission;
+        this.permission = !!response.data.has_permission;
+        return this.permission;
       } catch (error) {
         console.error("Permission check failed:", error);
         return false;

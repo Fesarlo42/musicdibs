@@ -28,14 +28,30 @@
         <nav>
           <ul class="menu menu-horizontal p-0 text-base">
             <li><router-link to="/verify">Verificar obra</router-link></li>
-            <li><router-link to="/dashboard">Dashboard</router-link></li>
-            <li><router-link to="/dashboard_admin">Dashboard</router-link></li>
-            <li><router-link to="/projects">Mis poryectos</router-link></li>
-            <li><router-link to="/new_project">Nuevo poryecto</router-link></li>
-            <li><router-link to="/settings">Ajustes</router-link></li>
-            <li><router-link to="/login">Acceder</router-link></li>
-            <li><router-link to="/signup">Registrarse</router-link></li>
-            <li><router-link to="/logout">Salir</router-link></li>
+            <li v-if="isAdmin">
+              <router-link to="/dashboard_admin">Dashboard</router-link>
+            </li>
+            <li v-if="isLoggedIn && !isAdmin">
+              <router-link to="/dashboard">Dashboard</router-link>
+            </li>
+            <li v-if="isLoggedIn && !isAdmin">
+              <router-link to="/projects">Mis poryectos</router-link>
+            </li>
+            <li v-if="isLoggedIn && !isAdmin">
+              <router-link to="/new_project">Nuevo poryecto</router-link>
+            </li>
+            <li v-if="isLoggedIn">
+              <router-link to="/settings">Ajustes</router-link>
+            </li>
+            <li v-if="!isLoggedIn">
+              <router-link to="/login">Acceder</router-link>
+            </li>
+            <li v-if="!isLoggedIn">
+              <router-link to="/signup">Registrarse</router-link>
+            </li>
+            <li v-if="isLoggedIn">
+              <router-link to="/logout">Salir</router-link>
+            </li>
           </ul>
         </nav>
         <nav>
@@ -98,7 +114,11 @@
   </footer>
 </template>
 
-<script setup />
+<script setup>
+import { useAuthStatus } from "../composables/useAuthStatus.js";
+
+const { isLoggedIn, isAdmin } = useAuthStatus();
+</script>
 
 <style scoped>
 footer {

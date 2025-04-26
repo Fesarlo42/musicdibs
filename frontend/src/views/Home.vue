@@ -6,11 +6,11 @@
         Tu creas, nosotros protegemos
       </h2>
     </section>
-    <section class="mt-[-30px]">
+    <section class="mt-11 pt-10 lg:mt-[-30px] lg:pt-0">
       <Instructions />
     </section>
     <section class="my-10 py-10">
-      <div class="z-10 w-3/5 p-8 glass">
+      <div class="w-100 z-10 p-8 glass sm:w-3/5">
         <h3 class="mb-6 text-center font-grace text-5xl/normal tracking-wider">
           Te ayudamos a proteger tus derechos de autor
         </h3>
@@ -156,8 +156,17 @@
 </template>
 
 <script setup>
+import { onMounted } from "vue";
+import { useAuthStore } from "../stores/auth.js";
+
 import Hero from "../components/Hero.vue";
 import Instructions from "../components/Instructions.vue";
+
+const authStore = useAuthStore();
+
+onMounted(() => {
+  authStore.initializeAuth();
+});
 </script>
 
 <style scoped>

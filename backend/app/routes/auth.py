@@ -21,7 +21,9 @@ def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
-    user = db.query(UserModel).filter(User.email == form_data.username).first()
+    print('form data:')
+    print(form_data.username, form_data.password)
+    user = db.query(UserModel).filter(UserModel.email == form_data.username).first()
     if not user or not verify_password(form_data.password, user.password):
         raise HTTPException(
             status_code=401,
@@ -36,6 +38,7 @@ def login(
         "first_name": user.first_name,
         "last_name": user.last_name,
         "ibs_sig": user.ibs_sig,
+        "created_at": user.created_at
     }
 
 @router.get("/{user_id}/has-permission")

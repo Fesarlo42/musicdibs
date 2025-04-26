@@ -23,7 +23,7 @@
 
 /* Custom synthwave theme overrides */
 [data-theme="synthwave"] {
-  --color-base-100: oklch(15% 0.09 281.288);
+  --color-base-100: oklch(100% 0 0);
   --color-base-200: oklch(20% 0.09 281.288);
   --color-base-300: oklch(30% 0.09 281.288);
   /* --color-base-content: oklch(96% 0.018 272.314); */
@@ -144,8 +144,13 @@ p {
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
-.file-input {
-  @apply bg-base-content;
+.fieldset-legend {
+  @apply text-base-200;
+}
+
+.file-input,
+.input {
+  @apply w-full border-gray-400 bg-base-content;
 }
 
 input.primary-content {
@@ -154,4 +159,22 @@ input.primary-content {
 
 .btn[disabled] {
   @apply bg-opacity-80 text-base-200;
+}
+
+@media screen and (max-width: 1024px) {
+  .timeline > li {
+    @apply mb-10;
+    display: initial;
+  }
+
+  .timeline > li hr {
+    @apply hidden;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .guxa {
+    @apply block w-full;
+    margin-top: 3rem !important;
+  }
 }

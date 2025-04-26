@@ -39,19 +39,30 @@
           />
         </router-link>
       </div>
-      <div class="navbar-center hidden lg:flex">
+      <div class="navbar-center hidden lg:flex lg:w-[50%] lg:justify-end">
         <ul class="menu menu-horizontal px-1">
           <li><router-link to="/verify">Verificar obra</router-link></li>
-          <li><router-link to="/dashboard">Dashboard</router-link></li>
-          <li><router-link to="/dashboard_admin">Dashboard</router-link></li>
-          <li><router-link to="/projects">Mis poryectos</router-link></li>
-          <li><router-link to="/settings">Ajustes</router-link></li>
-          <li><router-link to="/logout">Salir</router-link></li>
+          <li v-if="isAdmin">
+            <router-link to="/dashboard_admin">Dashboard</router-link>
+          </li>
+          <li v-if="isLoggedIn && !isAdmin">
+            <router-link to="/dashboard">Dashboard</router-link>
+          </li>
+
+          <li v-if="isLoggedIn && !isAdmin">
+            <router-link to="/projects">Mis proyectos</router-link>
+          </li>
+          <li v-if="isLoggedIn">
+            <router-link to="/settings">Ajustes</router-link>
+          </li>
+          <li v-if="isLoggedIn">
+            <router-link to="/logout">Salir</router-link>
+          </li>
         </ul>
       </div>
       <div class="navbar-end">
         <ul class="menu menu-horizontal px-1">
-          <li>
+          <li v-if="isLoggedIn && !isAdmin">
             <router-link to="/new_project">
               <button class="btn btn-primary border-0">
                 <svg
@@ -71,8 +82,10 @@
               </button>
             </router-link>
           </li>
-          <li><router-link to="/login">Acceder</router-link></li>
-          <li>
+          <li v-if="!isLoggedIn">
+            <router-link to="/login">Acceder</router-link>
+          </li>
+          <li v-if="!isLoggedIn">
             <router-link to="/signup">
               <button class="btn btn-primary border-0">Registrarse</button>
             </router-link>
@@ -83,4 +96,8 @@
   </div>
 </template>
 
-<script setup />
+<script setup>
+import { useAuthStatus } from "../composables/useAuthStatus.js";
+
+const { isLoggedIn, isAdmin } = useAuthStatus();
+</script>
