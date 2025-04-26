@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import axios from "axios";
+import api from "../api/axios.js";
 import { useAuthStore } from "./auth";
 
 export const useGenresStore = defineStore("genres", {
@@ -16,7 +16,7 @@ export const useGenresStore = defineStore("genres", {
       this.error = null;
 
       try {
-        const response = await axios.get("/genres");
+        const response = await api.get("/genres");
         this.genres = response.data;
         return this.genres;
       } catch (error) {
@@ -37,7 +37,7 @@ export const useGenresStore = defineStore("genres", {
       this.error = null;
 
       try {
-        const response = await axios.post("/genres", genreData);
+        const response = await api.post("/genres", genreData);
         const newGenre = response.data;
 
         // Add to genres list if we have it loaded
@@ -64,7 +64,7 @@ export const useGenresStore = defineStore("genres", {
       this.error = null;
 
       try {
-        await axios.delete(`/genres/${genreId}`);
+        await api.delete(`/genres/${genreId}`);
 
         // Remove from genres list if we have it loaded
         if (this.genres.length) {

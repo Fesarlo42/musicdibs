@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import axios from "axios";
+import api from "../api/axios.js";
 import { useAuthStore } from "./auth";
 
 export const useCreditsStore = defineStore("credits", {
@@ -25,7 +25,7 @@ export const useCreditsStore = defineStore("credits", {
       this.error = null;
 
       try {
-        const response = await axios.get(`/credits/balance/${userId}`);
+        const response = await api.get(`/credits/balance/${userId}`);
         this.balance = response.data;
         return this.balance;
       } catch (error) {
@@ -47,7 +47,7 @@ export const useCreditsStore = defineStore("credits", {
       this.error = null;
 
       try {
-        const response = await axios.post("/credits/add", userData);
+        const response = await api.post("/credits/add", userData);
         this.balance = response.data;
         return this.balance;
       } catch (error) {
@@ -68,7 +68,7 @@ export const useCreditsStore = defineStore("credits", {
       this.error = null;
 
       try {
-        const response = await axios.post("/credits/remove", userData);
+        const response = await api.post("/credits/remove", userData);
         this.balance = response.data;
         return this.balance;
       } catch (error) {
@@ -90,7 +90,7 @@ export const useCreditsStore = defineStore("credits", {
       this.error = null;
 
       try {
-        const response = await axios.get(`/credits/history/${userId}`, {
+        const response = await api.get(`/credits/history/${userId}`, {
           params: {
             skip: (page - 1) * limit,
             limit,

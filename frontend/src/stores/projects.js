@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import axios from "axios";
+import api from "../api/axios.js";
 import { useAuthStore } from "./auth";
 
 export const useProjectsStore = defineStore("projects", {
@@ -41,7 +41,7 @@ export const useProjectsStore = defineStore("projects", {
           sortOrder: params.sortOrder || this.filters.sortOrder,
         };
 
-        const response = await axios.get(`users/${params.user_id}/projects`, {
+        const response = await api.get(`users/${params.user_id}/projects`, {
           params: queryParams,
         });
 
@@ -81,7 +81,7 @@ export const useProjectsStore = defineStore("projects", {
       this.error = null;
 
       try {
-        const response = await axios.get(`/projects/${id}`);
+        const response = await api.get(`/projects/${id}`);
         this.currentProject = response.data;
 
         // Also update in the projects array if it exists there
@@ -111,7 +111,7 @@ export const useProjectsStore = defineStore("projects", {
       this.error = null;
 
       try {
-        const response = await axios.post("/projects", projectData);
+        const response = await api.post("/projects", projectData);
         const newProject = response.data;
 
         // Add the new project to the array and make it current
@@ -141,7 +141,7 @@ export const useProjectsStore = defineStore("projects", {
       this.error = null;
 
       try {
-        const response = await axios.put(`/projects/${id}`, projectData);
+        const response = await api.put(`/projects/${id}`, projectData);
         const updatedProject = response.data;
 
         // Update in the projects array
@@ -176,7 +176,7 @@ export const useProjectsStore = defineStore("projects", {
       this.error = null;
 
       try {
-        await axios.delete(`/projects/${id}`);
+        await api.delete(`/projects/${id}`);
 
         // Remove from the projects array
         this.projects = this.projects.filter((p) => p.id !== id);
@@ -210,7 +210,7 @@ export const useProjectsStore = defineStore("projects", {
       this.error = null;
 
       try {
-        await axios.post(`/projects/${projectId}/genres/${genreId}`);
+        await api.post(`/projects/${projectId}/genres/${genreId}`);
 
         // Refresh project data to get updated genres
         await this.fetchProjectById(projectId);
@@ -236,7 +236,7 @@ export const useProjectsStore = defineStore("projects", {
       this.error = null;
 
       try {
-        await axios.delete(`/projects/${projectId}/genres/${genreId}`);
+        await api.delete(`/projects/${projectId}/genres/${genreId}`);
 
         // Refresh project data to get updated genres
         await this.fetchProjectById(projectId);
@@ -266,7 +266,7 @@ export const useProjectsStore = defineStore("projects", {
         const formData = new FormData();
         formData.append("file", file);
 
-        const response = await axios.post(`/files/${projectId}`, formData, {
+        const response = await api.post(`/files/${projectId}`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -300,7 +300,7 @@ export const useProjectsStore = defineStore("projects", {
       this.error = null;
 
       try {
-        await axios.delete(`/files/${fileId}`);
+        await api.delete(`/files/${fileId}`);
 
         // Remove file from local state if it exists
         this.projectFiles = this.projectFiles.filter(
@@ -360,7 +360,7 @@ export const useProjectsStore = defineStore("projects", {
       this.error = null;
 
       try {
-        const response = await axios.get(`/files/project/${projectId}`);
+        const response = await api.get(`/files/project/${projectId}`);
         this.projectFiles = response.data;
         return this.projectFiles;
       } catch (error) {

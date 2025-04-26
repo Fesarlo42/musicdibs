@@ -1,3 +1,6 @@
+import { defineStore } from "pinia";
+import api from "../api/axios.js";
+
 export const useUsersStore = defineStore("users", {
   state: () => ({
     users: [],
@@ -13,7 +16,7 @@ export const useUsersStore = defineStore("users", {
       this.error = null;
 
       try {
-        const response = await axios.get("/users");
+        const response = await api.get("/users");
         this.users = response.data;
         return this.users;
       } catch (error) {
@@ -31,7 +34,7 @@ export const useUsersStore = defineStore("users", {
       this.error = null;
 
       try {
-        const response = await axios.get(`/users/${userId}`);
+        const response = await api.get(`/users/${userId}`);
         this.user = response.data;
         return this.user;
       } catch (error) {
@@ -49,7 +52,7 @@ export const useUsersStore = defineStore("users", {
       this.error = null;
 
       try {
-        const response = await axios.post("/users", userData);
+        const response = await api.post("/users", userData);
         const newUser = response.data;
 
         // Add to users list if we're maintaining it
@@ -73,7 +76,7 @@ export const useUsersStore = defineStore("users", {
       this.error = null;
 
       try {
-        const response = await axios.put(`/users/${userId}`, userData);
+        const response = await api.put(`/users/${userId}`, userData);
         const updatedUser = response.data;
 
         // Update in the users list if it exists
@@ -105,7 +108,7 @@ export const useUsersStore = defineStore("users", {
       this.error = null;
 
       try {
-        await axios.delete(`/users/${userId}`);
+        await api.delete(`/users/${userId}`);
 
         // Remove from users list if it exists
         if (this.users.length) {
@@ -133,7 +136,7 @@ export const useUsersStore = defineStore("users", {
       this.error = null;
 
       try {
-        const response = await axios.post(`/users/${userId}/signature`);
+        const response = await api.post(`/users/${userId}/signature`);
         return response.data;
       } catch (error) {
         this.error = error.response?.data?.message || "Failed to sign user";
