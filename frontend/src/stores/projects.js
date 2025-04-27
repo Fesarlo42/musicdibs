@@ -42,14 +42,16 @@ export const useProjectsStore = defineStore("projects", {
           params: queryParams,
         });
 
+        console.log("Projects response:", response.data);
+
         this.projects = response.data.projects;
 
         // Update pagination info
         this.pagination = {
-          currentPage: response.data.pagination.currentPage,
-          totalPages: response.data.pagination.totalPages,
-          totalItems: response.data.pagination.totalItems,
-          perPage: response.data.pagination.perPage,
+          currentPage: response.data.page,
+          totalPages: response.data.totalPages,
+          totalItems: response.data.totalItems,
+          perPage: response.data.perPage,
         };
 
         // Update filters if they were changed
@@ -63,7 +65,6 @@ export const useProjectsStore = defineStore("projects", {
         this.error =
           error.response?.data?.message || "Failed to fetch projects";
         console.error("Fetch projects error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -90,7 +91,6 @@ export const useProjectsStore = defineStore("projects", {
           error.response?.data?.message ||
           `Failed to fetch project with ID: ${id}`;
         console.error("Fetch project error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -117,7 +117,6 @@ export const useProjectsStore = defineStore("projects", {
         this.error =
           error.response?.data?.message || "Failed to create project";
         console.error("Create project error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -149,7 +148,6 @@ export const useProjectsStore = defineStore("projects", {
           error.response?.data?.message ||
           `Failed to update project with ID: ${id}`;
         console.error("Update project error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -180,7 +178,6 @@ export const useProjectsStore = defineStore("projects", {
           error.response?.data?.message ||
           `Failed to delete project with ID: ${id}`;
         console.error("Delete project error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -203,7 +200,6 @@ export const useProjectsStore = defineStore("projects", {
           error.response?.data?.message ||
           `Failed to add genre ${genreId} to project ${projectId}`;
         console.error("Add genre to project error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -226,7 +222,6 @@ export const useProjectsStore = defineStore("projects", {
           error.response?.data?.message ||
           `Failed to remove genre ${genreId} from project ${projectId}`;
         console.error("Remove genre from project error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -261,7 +256,6 @@ export const useProjectsStore = defineStore("projects", {
           error.response?.data?.message ||
           `Failed to upload file to project ${projectId}`;
         console.error("Upload file error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -275,17 +269,11 @@ export const useProjectsStore = defineStore("projects", {
       try {
         await api.delete(`/files/${fileId}`);
 
-        // Remove file from local state if it exists
-        this.projectFiles = this.projectFiles.filter(
-          (file) => file.id !== fileId,
-        );
-
         return true;
       } catch (error) {
         this.error =
           error.response?.data?.message || `Failed to delete file ${fileId}`;
         console.error("Delete file error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -297,25 +285,11 @@ export const useProjectsStore = defineStore("projects", {
       this.error = null;
 
       try {
-        // TODO: revisar eso!!
-        // This would typically open in a new tab or trigger a download
-        // We'll return the URL that the component can use
-        const url = `/files/${fileId}/download`;
-
-        // We can either return the URL for the component to handle
-        // or directly trigger the download with window.open
-
-        // Option 1: Return URL for component to handle
-        return url;
-
-        // Option 2: Directly trigger download
-        // window.open(url, '_blank');
-        // return true;
+        return await api.get(`/files/${fileId}/download`);
       } catch (error) {
         this.error =
           error.response?.data?.message || `Failed to download file ${fileId}`;
         console.error("Download file error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -335,7 +309,6 @@ export const useProjectsStore = defineStore("projects", {
           error.response?.data?.message ||
           `Failed to fetch files for project ${projectId}`;
         console.error("Fetch project files error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }

@@ -29,7 +29,6 @@ export const useCreditsStore = defineStore("credits", {
         this.error =
           error.response?.data?.message || "Failed to fetch credit balance";
         console.error("Fetch balance error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -52,7 +51,6 @@ export const useCreditsStore = defineStore("credits", {
       } catch (error) {
         this.error = error.response?.data?.message || "Failed to add credits";
         console.error("Add credits error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -76,7 +74,6 @@ export const useCreditsStore = defineStore("credits", {
         this.error =
           error.response?.data?.message || "Failed to remove credits";
         console.error("Remove credits error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -111,7 +108,6 @@ export const useCreditsStore = defineStore("credits", {
           error.response?.data?.message ||
           "Failed to fetch transaction history";
         console.error("Fetch transaction history error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }

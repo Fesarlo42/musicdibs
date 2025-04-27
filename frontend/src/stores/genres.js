@@ -22,7 +22,6 @@ export const useGenresStore = defineStore("genres", {
       } catch (error) {
         this.error = error.response?.data?.message || "Failed to fetch genres";
         console.error("Fetch genres error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -46,7 +45,6 @@ export const useGenresStore = defineStore("genres", {
       } catch (error) {
         this.error = error.response?.data?.message || "Failed to create genre";
         console.error("Create genre error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -71,7 +69,6 @@ export const useGenresStore = defineStore("genres", {
           error.response?.data?.message ||
           `Failed to delete genre with ID: ${genreId}`;
         console.error("Delete genre error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }

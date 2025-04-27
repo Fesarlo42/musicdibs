@@ -91,6 +91,10 @@ p {
   @apply musicdibs-shadow rounded-xl bg-base-content p-5 text-base-200;
 }
 
+.musicdibs-card .card-title {
+  @apply mb-3;
+}
+
 .musicdibs-card.secondary {
   @apply musicdibs-shadow-scondary;
 }
@@ -159,6 +163,41 @@ input.primary-content {
 
 .btn[disabled] {
   @apply bg-opacity-80 text-base-200;
+}
+
+.stat-title,
+.stat-figure,
+.stat-value,
+.stat-desc {
+  @apply text-primary;
+}
+
+.secondary .stat-title,
+.secondary .stat-figure,
+.secondary .stat-value,
+.secondary .stat-desc {
+  @apply text-secondary;
+}
+
+.neutral .stat-title,
+.neutral .stat-figure,
+.neutral .stat-value,
+.neutral .stat-desc {
+  @apply text-neutral;
+}
+
+.stat-title {
+  @apply text-lg font-semibold uppercase;
+}
+
+.stat-title {
+  grid-column-start: 2;
+}
+.stat-figure {
+  grid-column-start: 1;
+}
+.stat-value {
+  grid-column-start: 2;
 }
 
 @media screen and (max-width: 1024px) {

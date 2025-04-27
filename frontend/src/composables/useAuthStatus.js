@@ -6,8 +6,6 @@ export function useAuthStatus() {
 
   authStore.initializeAuth();
 
-  console.log("Auth store initialized:", authStore.user);
-
   const isLoggedIn = computed(() => authStore.isAuthenticated);
   const isAdmin = ref(false);
 

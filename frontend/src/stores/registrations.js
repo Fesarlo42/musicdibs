@@ -25,7 +25,6 @@ export const useRegistrationsStore = defineStore("registrations", {
           error.response?.data?.message ||
           `Failed to register project ${projectId}`;
         console.error("Registration error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -45,7 +44,6 @@ export const useRegistrationsStore = defineStore("registrations", {
           error.response?.data?.message ||
           `Failed to get registration for project ${projectId}`;
         console.error("Get registration error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -89,7 +87,6 @@ export const useRegistrationsStore = defineStore("registrations", {
         this.error =
           error.response?.data?.message || "File verification failed";
         console.error("File verification error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -113,7 +110,6 @@ export const useRegistrationsStore = defineStore("registrations", {
       } catch (error) {
         this.error = "Failed to download receipt";
         console.error("Receipt download error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }

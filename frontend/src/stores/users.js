@@ -22,7 +22,6 @@ export const useUsersStore = defineStore("users", {
       } catch (error) {
         this.error = error.response?.data?.message || "Failed to fetch users";
         console.error("Fetch users error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -40,7 +39,6 @@ export const useUsersStore = defineStore("users", {
       } catch (error) {
         this.error = error.response?.data?.message || "Failed to fetch user";
         console.error("Fetch user error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -64,7 +62,6 @@ export const useUsersStore = defineStore("users", {
       } catch (error) {
         this.error = error.response?.data?.message || "Failed to create user";
         console.error("Create user error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -96,7 +93,6 @@ export const useUsersStore = defineStore("users", {
       } catch (error) {
         this.error = error.response?.data?.message || "Failed to update user";
         console.error("Update user error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -124,13 +120,12 @@ export const useUsersStore = defineStore("users", {
       } catch (error) {
         this.error = error.response?.data?.message || "Failed to delete user";
         console.error("Delete user error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
     },
 
-    // Sign user (for signature endpoint)
+    // Make digital identity
     async makeSignature(userId) {
       this.isLoading = true;
       this.error = null;
@@ -141,7 +136,23 @@ export const useUsersStore = defineStore("users", {
       } catch (error) {
         this.error = error.response?.data?.message || "Failed to sign user";
         console.error("Sign user error:", error);
-        throw error;
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    // Get users digital identity info
+    async getSignatureInfo(userId) {
+      this.isLoading = true;
+      this.error = null;
+
+      try {
+        const response = await api.get(`/users/${userId}/signature`);
+        return response.data;
+      } catch (error) {
+        this.error =
+          error.response?.data?.message || "Failed to fetch user signature";
+        console.error("Fetch user signature error:", error);
       } finally {
         this.isLoading = false;
       }

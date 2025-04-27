@@ -13,7 +13,6 @@ export const useAuthStore = defineStore("auth", {
   actions: {
     // Initialize store from sessionStorage on app start
     initializeAuth() {
-      console.log("Initializing auth store...");
       try {
         const rawUser = sessionStorage.getItem("user");
         const user = JSON.parse(rawUser);
@@ -71,7 +70,6 @@ export const useAuthStore = defineStore("auth", {
             "Login failed";
         }
         console.error("Login error:", error);
-        throw error;
       } finally {
         this.isLoading = false;
       }
