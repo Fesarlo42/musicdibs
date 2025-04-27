@@ -336,6 +336,6 @@ async def get_registration(
     
     except Exception as e:
         raise HTTPException(
-            status_code = 500,
+            status_code = 502,
             detail = f"Failed to get evidence details: {str(e)}"
         )

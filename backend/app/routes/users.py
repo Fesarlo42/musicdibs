@@ -82,7 +82,7 @@ def update_user(user_id: int, updated_user: UserUpdate, response: Response, db: 
 
 
 @router.delete("/{user_id}", status_code=204)
-def delete_user(user_id: int, response: Response, db: Session = Depends(get_db)): 
+async def delete_user(user_id: int, response: Response, db: Session = Depends(get_db)): 
     # find the user by id or 404 if it doesnt exist
     user = db.get(UserModel, user_id)
     if user is None:
@@ -90,7 +90,7 @@ def delete_user(user_id: int, response: Response, db: Session = Depends(get_db))
     
     # deletes user ibs signature if there is any
     if user.ibs_sig:
-        delete_signature(user.ibs_sig)
+        await delete_signature(user.ibs_sig)
 
     try:
         db.delete(user)
@@ -211,7 +211,7 @@ async def make_signature(user_id: int, response: Response, db: Session = Depends
         raise HTTPException(status_code=500, detail=f"External API error: {str(e)}")
     
 @router.get("/{user_id}/signature", status_code=200)
-async def get_signature(user_id: int, response: Response, db: Session = Depends(get_db) ):
+async def get_user_signature(user_id: int, response: Response, db: Session = Depends(get_db) ):
     # find if the user exists
     user = db.get(UserModel, user_id)
     if user is None:

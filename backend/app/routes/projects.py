@@ -6,7 +6,7 @@ from typing import List
 from app.database import get_db
 
 # pydantic models
-from app.schemas import ProjectCreate, ProjectUpdate, ProjectResponse
+from app.schemas import ProjectCreate, ProjectUpdate, ProjectResponse, RegistrationResponse
 
 # sqlalchemy models
 from app.models import Project as ProjectModel, ProjectGenre as ProjectGenreModel, Genre as GenreModel
@@ -24,7 +24,36 @@ def get_project(project_id: int, db: Session = Depends(get_db)):
             status_code=404,
             detail=f"Project with ID {project_id} not found"
         )
-    return db_project
+    
+    # Get registration data if it exists
+    registration = None
+    if hasattr(db_project, 'registrations') and db_project.registrations:
+        reg = db_project.registrations[0]
+        registration = RegistrationResponse(
+            id=reg.id,
+            project_id=reg.project_id,
+            ibs_id=reg.ibs_id,
+            registered_at=reg.registered_at
+        )
+    
+    # Create a ProjectResponse with the registration included
+    response_data = {}
+
+    # Loop through all attributes in the db_project model
+    for key, value in db_project.__dict__.items():
+        if not key.startswith('_'):
+            response_data[key] = value
+
+     # Add relationship collections explicitly
+    if hasattr(db_project, 'files'):
+        response_data['files'] = db_project.files
+    
+    if hasattr(db_project, 'project_genres'):
+        response_data['project_genres'] = db_project.project_genres
+    
+    response_data['registration'] = registration
+    
+    return response_data
 
 @router.post("/", response_model=ProjectResponse, status_code=201)
 def create_project(project: ProjectCreate, db: Session = Depends(get_db)):

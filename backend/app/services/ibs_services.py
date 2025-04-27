@@ -37,6 +37,8 @@ async def put_signature(sig_id: str) -> dict:
         return response.json()
     
 async def get_signature(sig_id: str) -> dict:
+    print(f"Getting signature {sig_id}")
+    print(f"{ibs_url}/signatures/{sig_id}")
     async with httpx.AsyncClient() as client:
         response = await client.get(
             f"{ibs_url}/signatures/{sig_id}",
