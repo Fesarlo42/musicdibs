@@ -1,16 +1,21 @@
-from typing import List, Optional
-from datetime import datetime
 from pydantic import BaseModel
+from typing import Optional
+from enum import Enum
+from datetime import datetime
 
-from .messages import Message
 
-# conversations models
+class ConversationStatus(str, Enum):
+    in_progress = "in_progress"
+    completed = "completed"
+    archived = "archived"
+
+
 class ConversationBase(BaseModel):
     purpose: str
     tempo: str
     key_signature: str
     mood: str
-    status: str = "in_progress"
+    status: ConversationStatus = ConversationStatus.in_progress
 
 
 class ConversationCreate(ConversationBase):
@@ -22,14 +27,13 @@ class ConversationUpdate(BaseModel):
     tempo: Optional[str] = None
     key_signature: Optional[str] = None
     mood: Optional[str] = None
-    status: Optional[str] = None
+    status: Optional[ConversationStatus] = None
 
 
-class Conversation(ConversationBase):
+class ConversationResponse(ConversationBase):
     id: int
     project_id: int
     created_at: datetime
-    messages: List[Message] = []
-
+    
     class Config:
         from_attributes = True

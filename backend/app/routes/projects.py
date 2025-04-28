@@ -6,10 +6,10 @@ from typing import List
 from app.database import get_db
 
 # pydantic models
-from app.schemas import ProjectCreate, ProjectUpdate, ProjectResponse, RegistrationResponse
+from app.schemas import ProjectCreate, ProjectUpdate, ProjectResponse, RegistrationResponse, ConversationCreate, ConversationUpdate, ConversationResponse
 
 # sqlalchemy models
-from app.models import Project as ProjectModel, ProjectGenre as ProjectGenreModel, Genre as GenreModel
+from app.models import Project as ProjectModel, ProjectGenre as ProjectGenreModel, Genre as GenreModel, Conversation as ConversationModel
 
 
 router = APIRouter()
@@ -192,4 +192,106 @@ def remove_genre_from_project(
     db.delete(db_project_genre)
     db.commit()
     
-    return Response(status_code = 200)  # 204 No Content response
+    return Response(status_code = 200)
+
+@router.post("/{project_id}/conversation/", response_model=ConversationResponse, status_code=201)
+def create_conversation(
+    project_id: int, 
+    conversation: ConversationCreate, 
+    db: Session = Depends(get_db)
+):
+    # Verify the project exists
+    db_project = db.query(ProjectModel).filter(ProjectModel.id == project_id).first()
+    if not db_project:
+        raise HTTPException(status_code=404, detail=f"Project with ID {project_id} not found")
+    
+    # Check if a conversation already exists for this project
+    existing_conversation = db.query(ConversationModel).filter(
+        ConversationModel.project_id == project_id
+    ).first()
+    
+    if existing_conversation:
+        raise HTTPException(
+            status_code=400,
+            detail=f"A conversation already exists for project {project_id}"
+        )
+    
+    try:
+        # Create the conversation
+        db_conversation = ConversationModel(
+            project_id=project_id,
+            purpose=conversation.purpose,
+            tempo=conversation.tempo,
+            key_signature=conversation.key_signature,
+            mood=conversation.mood,
+            status=conversation.status
+        )
+        
+        db.add(db_conversation)
+        db.commit()
+        db.refresh(db_conversation)
+        
+        return db_conversation
+    
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error creating conversation: {str(e)}"
+        )
+
+
+@router.get("/{project_id}/conversation/", response_model=ConversationResponse)
+def get_conversation(project_id: int, db: Session = Depends(get_db)):
+    # Verify the project exists
+    db_project = db.query(ProjectModel).filter(ProjectModel.id == project_id).first()
+    if not db_project:
+        raise HTTPException(status_code=404, detail=f"Project with ID {project_id} not found")
+    
+    # Get the conversation for this project
+    conversation = db.query(ConversationModel).filter(
+        ConversationModel.project_id == project_id
+    ).first()
+    
+    if not conversation:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No conversation found for project {project_id}"
+        )
+    
+    return conversation
+
+
+@router.put("/{project_id}/conversation/", response_model=ConversationResponse)
+def update_conversation(
+    project_id: int,
+    conversation: ConversationUpdate,
+    db: Session = Depends(get_db)
+):
+    # Get the conversation for this project
+    db_conversation = db.query(ConversationModel).filter(
+        ConversationModel.project_id == project_id
+    ).first()
+    
+    if not db_conversation:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No conversation found for project {project_id}"
+        )
+    
+    # Update the conversation fields
+    update_data = conversation.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_conversation, key, value)
+    
+    try:
+        db.commit()
+        db.refresh(db_conversation)
+        return db_conversation
+    
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error updating conversation: {str(e)}"
+        )
