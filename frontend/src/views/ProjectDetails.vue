@@ -3,6 +3,36 @@
   <div class="p-4">
     <h1 class="text-2xl font-bold">Detalles del Proyecto</h1>
 
+    <section
+      v-if="
+        useProjectsStore.error ||
+        useGenresStore.error ||
+        useRegistrationsStore.error
+      "
+    >
+      <div
+        v-if="useProjectsStore.error"
+        role="alert"
+        class="alert alert-soft alert-error"
+      >
+        <span>{{ useProjectsStore.error }}</span>
+      </div>
+      <div
+        v-if="useGenresStore.error"
+        role="alert"
+        class="alert alert-soft alert-error"
+      >
+        <span>{{ useGenresStore.error }}</span>
+      </div>
+      <div
+        v-if="useRegistrationsStore.error"
+        role="alert"
+        class="alert alert-soft alert-error"
+      >
+        <span>{{ useRegistrationsStore.error }}</span>
+      </div>
+    </section>
+
     <ProjectInfo
       class="my-10"
       v-if="project"
@@ -13,17 +43,19 @@
       :isLoading="projectsStore.isLoading"
       @saveForm="handleUpdateProject"
       @saveFile="handleNewFile"
-    />
-
-    <ProjectRegistration
-      class="my-10"
-      v-if="isRegistered"
-      :registration="ibsRegistration"
-      :reciptDownload="reciptDownload"
-      :isLoading="registrationsStore.isLoading"
+      @deleteFile="handleDeleteFile"
     />
 
     <ProjectAiAssistant class="my-10" v-if="showAiChat" :project="project" />
+
+    <ProjectRegistration
+      class="my-10"
+      :isRegistered="isRegistered"
+      :registration="ibsRegistration"
+      :reciptDownload="reciptDownload"
+      :isLoading="registrationsStore.isLoading"
+      @registerProject="handleRegisterProject"
+    />
   </div>
 </template>
 
@@ -47,6 +79,7 @@ const route = useRoute();
 const router = useRouter();
 
 // reactive variables
+const userId = ref(null);
 const project = ref(null);
 const projectFilesDownloadData = ref([]);
 const ibsRegistration = ref(null);
@@ -56,7 +89,6 @@ const isRegistered = computed(
   () => project.value?.registration?.registered_at != null,
 );
 const isProjectOwner = computed(() => {
-  const userId = projectsStore.userId;
   return project.value?.owner_id === userId;
 });
 const reciptDownload = computed(() => {
@@ -84,6 +116,9 @@ const fileDownload = computed(() => {
 const showAiChat = computed(() => false); // TODO: Implement AI chat logic
 
 onMounted(async () => {
+  const userData = JSON.parse(sessionStorage.getItem("user"));
+  userId.value(userData.id);
+
   if (!isProjectOwner.value) {
     router.push({ name: "Unauthorized" });
     return;
@@ -122,10 +157,25 @@ const getFilesDownloadData = async () => {
 };
 
 const handleUpdateProject = async (updatedData) => {
-  // call your store to update project
+  const payload = {
+    name: updatedData.value.name,
+    description: updatedData.value.description,
+    project_genres: updatedData.value.genres.map((g) => g.id),
+  };
+
+  await projectsStore.updateProject(project.id, payload);
 };
 
 const handleNewFile = async (file) => {
-  // call your store to upload file
+  console.log(file);
+};
+
+const handleDeleteFile = async (file) => {
+  console.log(file);
+};
+
+const handleRegisterProject = async () => {
+  console.log("registering project...");
+  await registrationsStore.createRegistration(project.id);
 };
 </script>

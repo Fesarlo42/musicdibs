@@ -153,7 +153,9 @@ p {
 }
 
 .file-input,
-.input {
+.input,
+.textarea,
+.select {
   @apply w-full border-gray-400 bg-base-content;
 }
 

@@ -4,7 +4,7 @@
       <span class="loading loading-spinner text-primary"></span>
     </div>
     <div v-else class="card-body">
-      <h2 class="card-title">Detalles de la obra</h2>
+      <h2 class="card-title">Detalles del proyecto</h2>
       <template v-if="project">
         <div class="grid grid-cols-2 gap-8">
           <div>
@@ -117,9 +117,8 @@
             <fieldset class="fieldset">
               <legend class="fieldset-legend">Archivo original</legend>
               <div class="flex items-center gap-2">
-                <p>{{ userFile?.name || "-" }}</p>
-
                 <template v-if="userFile">
+                  <p>{{ userFile.name || "-" }}</p>
                   <a class="btn btn-ghost btn-sm" :href="fileDownloadUrl">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -138,7 +137,7 @@
                   <button
                     v-if="editable"
                     class="btn btn-ghost btn-sm text-error"
-                    @click="handleDelete"
+                    @click="handleDeleteFile"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -153,6 +152,13 @@
                       />
                     </svg>
                   </button>
+                </template>
+                <template v-else>
+                  <input
+                    type="file"
+                    class="primary-content file-input file-input-primary block w-full"
+                    @change="handleFileChange"
+                  />
                 </template>
               </div>
             </fieldset>
@@ -201,7 +207,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["saveForm", "downloadFile", "deleteFile"]);
+const emit = defineEmits(["saveForm", "saveFile", "deleteFile"]);
 
 const form = reactive({
   name: props.project.name,
@@ -214,7 +220,14 @@ const form = reactive({
 
 const selectedGenre = ref("");
 const editingField = ref(null);
+const newFile = ref(null);
 const isChanged = ref(false);
+
+const userFile = computed(() => {
+  return props.project.files.find(
+    (file) => file.origin === "user_upload" || file.origin === "ai_generated",
+  );
+});
 
 const startEditing = (field) => {
   if (!props.editable) return;
@@ -258,24 +271,24 @@ const handleRemoveGenre = (index) => {
 
 const handleSave = () => {
   emit("saveForm", { ...form });
+
+  if (newFile.value) {
+    emit("saveFile", newFile.value);
+  }
+
   isChanged.value = false;
   stopEditing();
 };
 
-// Computed to find the correct file
-const userFile = computed(() => {
-  return props.project.files.find(
-    (file) => file.origin === "user_upload" || file.origin === "ai_generated",
-  );
-});
-
-// Actions for file download and delete
-const handleDownload = () => {
-  console.log("Download file:", props.filesDownloadData);
+const handleFileChange = (event) => {
+  isChanged.value = true;
+  newFile.value = event.target.files[0];
 };
-const handleDelete = () => {
+
+const handleDeleteFile = () => {
   if (userFile.value && props.editable) {
     emit("deleteFile", userFile.value);
+    stopEditing();
   }
 };
 </script>

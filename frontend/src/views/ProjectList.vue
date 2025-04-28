@@ -1,7 +1,7 @@
 <template>
   <div class="p-4">
     <h1 class="text-2xl font-bold">Mis Projectos</h1>
-    <div class="mt-4">
+    <section class="mt-4">
       <div class="musicdibs-card w-full bg-base-100">
         <div class="card-body">
           <h2 class="card-title">Listado de proyectos</h2>
@@ -47,7 +47,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </section>
   </div>
 </template>
 

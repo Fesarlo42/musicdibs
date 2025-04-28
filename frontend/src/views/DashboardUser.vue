@@ -3,11 +3,11 @@
     <h1 class="text-2xl font-bold">Dashboard</h1>
 
     <div class="grid grid-cols-1 gap-7 md:grid-cols-4">
-      <div class="order-1 pt-4 md:col-span-4">
+      <section class="order-1 pt-4 md:col-span-4">
         <UserSummary />
-      </div>
+      </section>
 
-      <div class="order-2 pt-4 md:col-span-2">
+      <section class="order-2 pt-4 md:col-span-2">
         <div class="musicdibs-card bg-base-100">
           <div class="card-body">
             <h2 class="card-title">Añadir proyecto</h2>
@@ -22,9 +22,9 @@
             </router-link>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div class="order-3 pt-4 md:order-3 md:col-span-2 md:row-span-3">
+      <section class="order-3 pt-4 md:order-3 md:col-span-2 md:row-span-3">
         <div class="musicdibs-card bg-base-100">
           <div class="card-body">
             <h2 class="card-title">Ultimos proyectos</h2>
@@ -47,9 +47,9 @@
             <p v-else>Todavía no has creado ningún proyecto.</p>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div class="order-4 pt-4 md:order-4 md:col-span-2">
+      <section class="order-4 pt-4 md:order-4 md:col-span-2">
         <div class="musicdibs-card secondary bg-base-100">
           <div class="card-body">
             <h2 class="card-title">Ultimos registros</h2>
@@ -80,7 +80,7 @@
             <p v-else>Todavía no tienes proyectos registrados.</p>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   </div>
 

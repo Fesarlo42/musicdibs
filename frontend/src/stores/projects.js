@@ -314,6 +314,90 @@ export const useProjectsStore = defineStore("projects", {
       }
     },
 
+    // Create a conversation for a project
+    async createConversation(projectId, conversationData) {
+      this.isLoading = true;
+      this.error = null;
+
+      try {
+        const response = await api.post(
+          `/projects/${projectId}/conversation/`,
+          conversationData,
+        );
+
+        // If the current project is the one we're adding a conversation to, update it
+        if (this.currentProject && this.currentProject.id === projectId) {
+          this.currentProject.conversation = response.data;
+        }
+
+        return response.data;
+      } catch (error) {
+        this.error =
+          error.response?.data?.message ||
+          `Failed to create conversation for project ${projectId}`;
+        console.error("Create conversation error:", error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    // Get conversation for a project
+    async fetchConversation(projectId) {
+      this.isLoading = true;
+      this.error = null;
+
+      try {
+        const response = await api.get(`/projects/${projectId}/conversation/`);
+
+        // If the current project is the one we're fetching conversation for, update it
+        if (this.currentProject && this.currentProject.id === projectId) {
+          this.currentProject.conversation = response.data;
+        }
+
+        return response.data;
+      } catch (error) {
+        // Check if the error is a 404 Not Found
+        if (error.response && error.response.status === 404) {
+          console.log(`No conversation found for project ${projectId}`);
+          return false;
+        }
+
+        this.error =
+          error.response?.data?.message ||
+          `Failed to fetch conversation for project ${projectId}`;
+        console.error("Fetch conversation error:", error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    // Update conversation for a project
+    async updateConversation(projectId, conversationData) {
+      this.isLoading = true;
+      this.error = null;
+
+      try {
+        const response = await api.put(
+          `/projects/${projectId}/conversation/`,
+          conversationData,
+        );
+
+        // If the current project is the one we're updating conversation for, update it
+        if (this.currentProject && this.currentProject.id === projectId) {
+          this.currentProject.conversation = response.data;
+        }
+
+        return response.data;
+      } catch (error) {
+        this.error =
+          error.response?.data?.message ||
+          `Failed to update conversation for project ${projectId}`;
+        console.error("Update conversation error:", error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
     // Reset store state
     resetState() {
       this.projects = [];
