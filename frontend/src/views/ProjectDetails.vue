@@ -38,7 +38,7 @@
       v-if="project"
       :project="project"
       :editable="!isRegistered"
-      :allGenres="genresStore.genres"
+      :allGenres="allGenres"
       :fileDownloadUrl="fileDownload"
       :isLoading="projectsStore.isLoading"
       @saveForm="handleUpdateProject"
@@ -66,6 +66,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useProjectsStore } from "../stores/projects.js";
 import { useGenresStore } from "../stores/genres.js";
 import { useRegistrationsStore } from "../stores/registrations.js";
+import { useAuthStore } from "../stores/auth.js";
 
 import ProjectInfo from "../components/ProjectInfo.vue";
 import ProjectRegistration from "../components/ProjectRegistration.vue";
@@ -74,6 +75,7 @@ import ProjectAiAssistant from "../components/ProjectAiAssistant.vue";
 const projectsStore = useProjectsStore();
 const genresStore = useGenresStore();
 const registrationsStore = useRegistrationsStore();
+const authStore = useAuthStore();
 
 const route = useRoute();
 const router = useRouter();
@@ -82,14 +84,17 @@ const router = useRouter();
 const userId = ref(null);
 const project = ref(null);
 const projectFilesDownloadData = ref([]);
-const ibsRegistration = ref(null);
+const allGenres = ref([]);
 
 // computed properties
 const isRegistered = computed(
   () => project.value?.registration?.registered_at != null,
 );
 const isProjectOwner = computed(() => {
-  return project.value?.owner_id === userId;
+  return project.value.user_id == userId.value;
+});
+const ibsRegistration = computed(() => {
+  return registrationsStore.registration?.evidence_details;
 });
 const reciptDownload = computed(() => {
   const reciptData = projectFilesDownloadData.value.find(
@@ -116,14 +121,6 @@ const fileDownload = computed(() => {
 const showAiChat = computed(() => false); // TODO: Implement AI chat logic
 
 onMounted(async () => {
-  const userData = JSON.parse(sessionStorage.getItem("user"));
-  userId.value(userData.id);
-
-  if (!isProjectOwner.value) {
-    router.push({ name: "Unauthorized" });
-    return;
-  }
-
   const ref = route.params.ref;
   if (ref) {
     project.value = await projectsStore.fetchProjectById(ref);
@@ -131,13 +128,18 @@ onMounted(async () => {
     console.error("Missing project ref in route params");
   }
 
-  await genresStore.fetchAllGenres();
+  userId.value = authStore.user.id;
+
+  if (!isProjectOwner.value) {
+    router.push({ name: "Unauthorized" });
+    return;
+  }
+
+  allGenres.value = await genresStore.fetchAllGenres();
 
   await getFilesDownloadData();
 
   await registrationsStore.getRegistration(projectsStore.currentProject.id);
-
-  ibsRegistration.value = registrationsStore.registration?.evidence_details;
 });
 
 const getFilesDownloadData = async () => {
@@ -157,13 +159,14 @@ const getFilesDownloadData = async () => {
 };
 
 const handleUpdateProject = async (updatedData) => {
+  console.log("updating project...", updatedData);
   const payload = {
-    name: updatedData.value.name,
-    description: updatedData.value.description,
-    project_genres: updatedData.value.genres.map((g) => g.id),
+    name: updatedData.name,
+    description: updatedData.description,
+    project_genres: updatedData.genres.map((g) => g.id),
   };
 
-  await projectsStore.updateProject(project.id, payload);
+  await projectsStore.updateProject(project.value.id, payload);
 };
 
 const handleNewFile = async (file) => {
@@ -175,7 +178,6 @@ const handleDeleteFile = async (file) => {
 };
 
 const handleRegisterProject = async () => {
-  console.log("registering project...");
-  await registrationsStore.createRegistration(project.id);
+  await registrationsStore.createRegistration(project.value.id);
 };
 </script>

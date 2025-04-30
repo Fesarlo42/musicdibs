@@ -59,10 +59,10 @@
                       <option disabled value="">Selecciona un género</option>
                       <option
                         v-for="genreOption in props.allGenres"
-                        :key="genreOption.genre.id"
-                        :value="genreOption.genre.id"
+                        :key="genreOption.id"
+                        :value="genreOption.id"
                       >
-                        {{ genreOption.genre.name }}
+                        {{ genreOption.name }}
                       </option>
                     </select>
                     <div class="mt-4 flex flex-wrap gap-2">
@@ -182,7 +182,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, computed } from "vue";
+import { reactive, ref, computed, onMounted } from "vue";
 
 const props = defineProps({
   project: {
@@ -210,12 +210,14 @@ const props = defineProps({
 const emit = defineEmits(["saveForm", "saveFile", "deleteFile"]);
 
 const form = reactive({
-  name: props.project.name,
-  description: props.project.description,
-  genres: props.project.project_genres.map((pg) => ({
-    id: pg.genre.id,
-    name: pg.genre.name,
-  })),
+  name: props.project?.name || "",
+  description: props.project?.description || "",
+  genres: props.project?.project_genres
+    ? props.project.project_genres.map((pg) => ({
+        id: pg.genre.id,
+        name: pg.genre.name,
+      }))
+    : [],
 });
 
 const selectedGenre = ref("");
@@ -229,7 +231,13 @@ const userFile = computed(() => {
   );
 });
 
+onMounted(() => {
+  console.log("Project data:", props.project);
+  console.log("all genres", props.allGenres);
+});
+
 const startEditing = (field) => {
+  console.log("Editing field:", field);
   if (!props.editable) return;
   editingField.value = field;
 };
@@ -247,13 +255,11 @@ const handleAddGenre = () => {
 
   const exists = form.genres.find((g) => g.id === selectedGenre.value);
   if (!exists) {
-    const genreData = props.allGenres.find(
-      (g) => g.genre.id === selectedGenre.value,
-    );
+    const genreData = props.allGenres.find((g) => g.id === selectedGenre.value);
     if (genreData) {
       form.genres.push({
-        id: genreData.genre.id,
-        name: genreData.genre.name,
+        id: genreData.id,
+        name: genreData.name,
       });
       isChanged.value = true;
     }
