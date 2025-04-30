@@ -24,6 +24,7 @@ export const useCreditsStore = defineStore("credits", {
       try {
         const response = await api.get(`/credits/balance/${userId}`);
         this.balance = response.data.total_credits;
+
         return this.balance;
       } catch (error) {
         this.error =
@@ -92,7 +93,7 @@ export const useCreditsStore = defineStore("credits", {
           },
         });
 
-        this.transactionHistory = response.data.items;
+        this.transactionHistory = response.data.transactions;
         this.pagination = {
           currentPage: page,
           totalItems: response.data.total,
