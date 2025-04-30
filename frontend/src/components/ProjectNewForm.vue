@@ -10,6 +10,7 @@
             <input
               v-model="form.name"
               class="validator input"
+              :class="{ 'input-error': nameInvalid }"
               required
               autofocus
             />
@@ -127,7 +128,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { reactive, ref, computed } from "vue";
 
 const props = defineProps({
   allGenres: {
@@ -139,25 +140,27 @@ const props = defineProps({
 const emit = defineEmits(["createProject"]);
 
 const selectedGenre = ref("");
-const form = ref({
+
+const form = reactive({
   name: "",
   description: "",
   genres: [],
   projectType: "",
 });
 
+const nameInvalid = ref(false);
 const genreInvalid = computed(() => {
-  return form.value.genres.length === 0;
+  return form.genres.length === 0;
 });
 const projectTypeInvalid = computed(() => {
-  return !form.value.projectType;
+  return !form.projectType;
 });
 
 // Handlers
 const handleAddGenre = () => {
   const foundGenre = props.allGenres.find((g) => g.id === selectedGenre.value);
-  if (foundGenre && !form.value.genres.some((g) => g.id === foundGenre.id)) {
-    form.value.genres.push({
+  if (foundGenre && !form.genres.some((g) => g.id === foundGenre.id)) {
+    form.genres.push({
       id: foundGenre.id,
       name: foundGenre.name,
     });
@@ -166,20 +169,24 @@ const handleAddGenre = () => {
 };
 
 const handleRemoveGenre = (index) => {
-  form.value.genres.splice(index, 1);
+  form.genres.splice(index, 1);
 };
 
 const handleCancel = () => {
-  form.value = {
-    name: "",
-    description: "",
-    genres: [],
-    projectType: "",
-  };
+  form.name = "";
+  form.description = "";
+  form.genres = [];
+  form.projectType = "";
+  nameInvalid.value = false;
 };
 
 const handleSubmit = () => {
-  console.log("createProject", form);
+  nameInvalid.value = form.name.trim() === "";
+
+  if (nameInvalid.value || genreInvalid.value || projectTypeInvalid.value) {
+    return;
+  }
+
   emit("createProject", { ...form });
 };
 </script>

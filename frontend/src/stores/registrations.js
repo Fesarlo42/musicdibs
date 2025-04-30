@@ -40,6 +40,10 @@ export const useRegistrationsStore = defineStore("registrations", {
         this.registration = response.data;
         return this.registration;
       } catch (error) {
+        if (error.response?.status === 404) {
+          return null;
+        }
+
         this.error =
           error.response?.data?.message ||
           `Failed to get registration for project ${projectId}`;

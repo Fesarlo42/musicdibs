@@ -38,6 +38,7 @@ import { useRouter } from "vue-router";
 
 import { useGenresStore } from "../stores/genres.js";
 import { useProjectsStore } from "../stores/projects.js";
+import { useAuthStore } from "../stores/auth.js";
 
 import ProjectNewForm from "../components/ProjectNewForm.vue";
 import ProjectNewFile from "../components/ProjectNewFile.vue";
@@ -45,6 +46,7 @@ import ProjectNewAi from "../components/ProjectNewAi.vue";
 
 const genresStore = useGenresStore();
 const projectsStore = useProjectsStore();
+const authStore = useAuthStore();
 const router = useRouter();
 
 const userId = ref(null);
@@ -55,21 +57,17 @@ const showAiCard = ref(false);
 
 onMounted(async () => {
   const userData = JSON.parse(sessionStorage.getItem("user"));
-  userId.value = userData.id;
+  userId.value = authStore.user.id;
 
   allGenres.value = await genresStore.fetchAllGenres();
 });
 
 const createProject = async (projectData) => {
-  // TODO: porque no funciona?!
-  console.log("projectData: ", projectData);
-  console.log("project vlue: ", projectData.value);
-  console.log("project name: ", projectData.name);
   const payload = {
-    name: projectData.value.name,
-    description: projectData.value.description,
+    name: projectData.name,
+    description: projectData.description,
     user_id: userId.value,
-    project_genres: projectData.value.genres.map((g) => g.id),
+    project_genres: projectData.genres.map((g) => g.id),
   };
 
   const createdProject = await projectsStore.createProject(payload);
@@ -79,31 +77,30 @@ const createProject = async (projectData) => {
   }
   newProjectId.value = createdProject.id;
 
-  if (projectData.value.projectType === "existing") {
+  if (projectData.projectType === "existing") {
     showUploadFileCard.value = true;
-  } else if (projectData.value.projectType === "new") {
+  } else if (projectData.projectType === "new") {
     showAiCard.value = true;
   }
 };
 
 const uploadProjectFile = async (file) => {
-  if (!newProjectId) {
+  if (!newProjectId.value) {
     console.log("No project id to upload file");
     return;
   }
 
-  await projectsStore.uploadProjectFile(newProjectId, file);
+  await projectsStore.uploadProjectFile(newProjectId.value, file);
 
-  router.push(`/projects/${newProjectId}`);
+  router.push(`/projects/${newProjectId.value}`);
 };
 
 const createConversation = async (conversationData) => {
-  // TODO: esse provavelmente não funciona também
   const payload = {
-    purpose: conversationData.value.purpose,
-    tempo: conversationData.value.tempo,
-    key_signature: conversationData.value.key_signature,
-    mood: conversationData.value.mood,
+    purpose: conversationData.purpose,
+    tempo: conversationData.tempo,
+    key_signature: conversationData.key_signature,
+    mood: conversationData.mood,
     status: "in_progress",
   };
 

@@ -53,6 +53,6 @@ const form = ref({
 const emit = defineEmits(["createConversation"]);
 
 const handleSubmit = () => {
-  emit("createConversation", { ...form });
+  emit("createConversation", { ...form.value });
 };
 </script>
