@@ -64,7 +64,17 @@ def update_user(user_id: int, updated_user: UserUpdate, response: Response, db: 
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
+    # Convert pydantic model to dict, excluding unset fields
     user_dict = updated_user.dict(exclude_unset=True)
+    
+    # Handle password hashing
+    if "password" in user_dict:
+        if not user_dict["password"]:
+            del user_dict["password"]
+        else:
+            user_dict["password"] = hash_password(user_dict["password"])
+    
+    # Update user attributes
     for key, value in user_dict.items():
         setattr(user, key, value)
     
