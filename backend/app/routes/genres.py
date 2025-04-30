@@ -13,13 +13,13 @@ from app.models.models import Genre as GenreModel
 
 router = APIRouter()
 
-@router.get("/", response_model=List[Genre])
+@router.get("", response_model=List[Genre])
 def get_all_genres(db: Session = Depends(get_db)):
     genres = db.query(GenreModel).all()
     return genres
 
 
-@router.post("/", response_model=Genre, status_code=201)
+@router.post("", response_model=Genre, status_code=201)
 def create_genre(genre: GenreCreate, db: Session = Depends(get_db)):
     # Check if genre with same name already exists
     existing_genre = db.query(GenreModel).filter(GenreModel.name == genre.name).first()
