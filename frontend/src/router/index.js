@@ -77,7 +77,7 @@ const routes = [
     meta: { title: "Dashboard de administración - Musicdibs" },
   },
   {
-    path: "/manage_users",
+    path: "/manage_users/:ref",
     name: "ManageUser",
     component: ManageUser,
     meta: { title: "Gestionar usuario - Musicdibs" },
@@ -114,7 +114,13 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior() {
-    return { top: 0 };
+    const app = document.getElementById("app");
+
+    if (app) {
+      app.scrollTop = 0;
+    }
+
+    return { x: 0, y: 0 };
   },
 });
 
