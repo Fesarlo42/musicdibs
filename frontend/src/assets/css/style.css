@@ -64,6 +64,7 @@ body,
   overflow-x: hidden;
   padding: 0;
   width: 100%;
+  scroll-behavior: smooth;
 }
 
 p {
@@ -135,8 +136,16 @@ p {
   @apply uppercase;
 }
 
+.btn:is(:disabled, [disabled], .btn-disabled):not(.btn-link, .btn-ghost) {
+  background-color: color-mix(in oklab, var(--color-primary) 10%, transparent);
+  box-shadow: none;
+}
+
 .btn-link {
   @apply transition-colors hover:text-primary;
+}
+.btn-link.btn-primary:hover {
+  @apply text-primary-content;
 }
 .btn-ghost:hover {
   @apply border-primary bg-primary text-white shadow-none;

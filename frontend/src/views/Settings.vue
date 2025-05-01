@@ -8,6 +8,7 @@
           :userData="userData"
           :error="useUsersStore.error"
           @saveForm="updateUser"
+          @deleteUser="handleDeleteUser"
         />
         <IdentityData
           v-if="userData && userData.role === 'user'"
@@ -57,5 +58,15 @@ onMounted(async () => {
 
 const updateUser = async (form) => {
   await usersStore.updateUser(userData.value.id, form);
+};
+
+const handleDeleteUser = async () => {
+  const confirmed = confirm(
+    "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.",
+  );
+  if (confirmed) {
+    await usersStore.deleteUser(userData.value.id);
+    authStore.logout();
+  }
 };
 </script>

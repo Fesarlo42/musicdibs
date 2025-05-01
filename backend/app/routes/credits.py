@@ -75,6 +75,9 @@ def remove_credits(credit_data: CreditsRemove, db: Session = Depends(get_db)):
     
     # Check if user has enough credits
     current_balance = get_credits_balance(credit_data.user_id, db)
+    if isinstance(current_balance, dict) and 'total_credits' in current_balance:
+        current_balance = current_balance['total_credits']
+        
     if current_balance < credit_data.amount:
         raise HTTPException(
             status_code=400, 

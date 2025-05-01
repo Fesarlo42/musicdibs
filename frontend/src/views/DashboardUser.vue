@@ -2,9 +2,37 @@
   <div class="p-4">
     <h1 class="text-2xl font-bold">Dashboard</h1>
 
+    <section
+      v-if="
+        useProjectsStore.error || useCreditsStore.error || useAuthStore.error
+      "
+    >
+      <div
+        v-if="useAuthStore.error"
+        role="alert"
+        class="alert alert-soft alert-error"
+      >
+        <span>{{ useAuthStore.error }}</span>
+      </div>
+      <div
+        v-if="useProjectsStore.error"
+        role="alert"
+        class="alert alert-soft alert-error"
+      >
+        <span>{{ useProjectsStore.error }}</span>
+      </div>
+      <div
+        v-if="useCreditsStore.error"
+        role="alert"
+        class="alert alert-soft alert-error"
+      >
+        <span>{{ useCreditsStore.error }}</span>
+      </div>
+    </section>
+
     <div class="grid grid-cols-1 gap-7 md:grid-cols-4">
       <section class="order-1 pt-4 md:col-span-4">
-        <UserSummary />
+        <SummaryUser />
       </section>
 
       <section class="order-2 pt-4 md:col-span-2">
@@ -94,7 +122,7 @@ import { useProjectsStore } from "../stores/projects.js";
 import { useCreditsStore } from "../stores/credits.js";
 import { useAuthStore } from "../stores/auth.js";
 
-import UserSummary from "../components/UserSummary.vue";
+import SummaryUser from "../components/SummaryUser.vue";
 import ProjectListItem from "../components/ProjectListItem.vue";
 import IdentityModal from "../components/IdentityModal.vue";
 
