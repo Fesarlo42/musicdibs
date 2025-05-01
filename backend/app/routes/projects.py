@@ -1,19 +1,197 @@
 from fastapi import APIRouter, Response, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-from typing import List
 
 from app.database import get_db
 
 # pydantic models
-from app.schemas import ProjectCreate, ProjectUpdate, ProjectResponse, RegistrationResponse, ConversationCreate, ConversationUpdate, ConversationResponse
+from app.schemas import ProjectCreate, ProjectUpdate, ProjectResponse, ProjectStats, RegistrationResponse, ConversationCreate, ConversationUpdate, ConversationResponse
 
 # sqlalchemy models
-from app.models import Project as ProjectModel, ProjectGenre as ProjectGenreModel, Genre as GenreModel, Conversation as ConversationModel
+from app.models import Project as ProjectModel, ProjectGenre as ProjectGenreModel, Genre as GenreModel, Conversation as ConversationModel, Registration as RegistrationModel
 
 
 router = APIRouter()
 
+# Genre related endpoints
+@router.post("/{project_id}/genres/{genre_id}", status_code=201)
+def add_genre_to_project(
+    project_id: int, 
+    genre_id: int,
+    db: Session = Depends(get_db)
+):
+    # Verify the project exists
+    db_project = db.query(ProjectModel).filter(ProjectModel.id == project_id).first()
+    if not db_project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    # Verify the genre exists
+    db_genre = db.query(GenreModel).filter(GenreModel.id == genre_id).first()
+    if not db_genre:
+        raise HTTPException(status_code=404, detail="Genre not found")
+    
+    # Check if relationship already exists
+    existing = db.query(ProjectGenreModel).filter(
+        ProjectGenreModel.project_id == project_id,
+        ProjectGenreModel.genre_id == genre_id
+    ).first()
+    
+    if existing:
+        raise HTTPException(status_code=400, detail="This genre is already in the project")
+    
+    # Create the relationship
+    db_project_genre = ProjectGenreModel(project_id=project_id, genre_id=genre_id)
+    db.add(db_project_genre)
+    db.commit()
+    
+    return {"message": "Genre added to project successfully"}
+
+
+@router.delete("/{project_id}/genres/{genre_id}")
+def remove_genre_from_project(
+    project_id: int, 
+    genre_id: int,
+    response: Response,
+    db: Session = Depends(get_db)
+):
+    # Find the relationship
+    db_project_genre = db.query(ProjectGenreModel).filter(
+        ProjectGenreModel.project_id == project_id,
+        ProjectGenreModel.genre_id == genre_id
+    ).first()
+    
+    if not db_project_genre:
+        raise HTTPException(status_code=404, detail="Genre not found in this project")
+    
+    # Delete the relationship
+    db.delete(db_project_genre)
+    db.commit()
+    
+    return Response(status_code = 200)
+
+
+# Conversation related endpoints
+@router.post("/{project_id}/conversation", response_model=ConversationResponse, status_code=201)
+def create_conversation(
+    project_id: int, 
+    conversation: ConversationCreate, 
+    db: Session = Depends(get_db)
+):
+    # Verify the project exists
+    db_project = db.query(ProjectModel).filter(ProjectModel.id == project_id).first()
+    if not db_project:
+        raise HTTPException(status_code=404, detail=f"Project with ID {project_id} not found")
+    
+    # Check if a conversation already exists for this project
+    existing_conversation = db.query(ConversationModel).filter(
+        ConversationModel.project_id == project_id
+    ).first()
+    
+    if existing_conversation:
+        raise HTTPException(
+            status_code=400,
+            detail=f"A conversation already exists for project {project_id}"
+        )
+    
+    try:
+        # Create the conversation
+        db_conversation = ConversationModel(
+            project_id=project_id,
+            purpose=conversation.purpose,
+            tempo=conversation.tempo,
+            key_signature=conversation.key_signature,
+            mood=conversation.mood,
+            status=conversation.status
+        )
+        
+        db.add(db_conversation)
+        db.commit()
+        db.refresh(db_conversation)
+        
+        return db_conversation
+    
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error creating conversation: {str(e)}"
+        )
+
+@router.get("/{project_id}/conversation", response_model=ConversationResponse)
+def get_conversation(project_id: int, db: Session = Depends(get_db)):
+    # Verify the project exists
+    db_project = db.query(ProjectModel).filter(ProjectModel.id == project_id).first()
+    if not db_project:
+        raise HTTPException(status_code=404, detail=f"Project with ID {project_id} not found")
+    
+    # Get the conversation for this project
+    conversation = db.query(ConversationModel).filter(
+        ConversationModel.project_id == project_id
+    ).first()
+    
+    if not conversation:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No conversation found for project {project_id}"
+        )
+    
+    return conversation
+
+@router.put("/{project_id}/conversation", response_model=ConversationResponse)
+def update_conversation(
+    project_id: int,
+    conversation: ConversationUpdate,
+    db: Session = Depends(get_db)
+):
+    # Get the conversation for this project
+    db_conversation = db.query(ConversationModel).filter(
+        ConversationModel.project_id == project_id
+    ).first()
+    
+    if not db_conversation:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No conversation found for project {project_id}"
+        )
+    
+    # Update the conversation fields
+    update_data = conversation.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_conversation, key, value)
+    
+    try:
+        db.commit()
+        db.refresh(db_conversation)
+        return db_conversation
+    
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error updating conversation: {str(e)}"
+        )
+    
+
+# Stats
+@router.get("/stats", response_model=ProjectStats)
+def get_project_stats(db: Session = Depends(get_db)):
+    try:
+        total_projects = db.query(ProjectModel).count()
+        total_registrations = db.query(RegistrationModel).count()
+        total_conversations = db.query(ConversationModel).count()
+        
+        print(f"Debug values: projects={total_projects}, registrations={total_registrations}, conversations={total_conversations}")
+        
+        return ProjectStats(
+            total_projects=total_projects,
+            total_registrations=total_registrations,
+            total_conversations=total_conversations
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
+
+
+# Project related endpoints
 @router.get("/{project_id}", response_model=ProjectResponse)
 def get_project(project_id: int, db: Session = Depends(get_db)):
     
@@ -135,163 +313,3 @@ def delete_project(project_id: int,  response: Response, db: Session = Depends(g
         )
 
     return Response(status_code = 200)
-
-
-# Genre related endpoints
-
-@router.post("/{project_id}/genres/{genre_id}", status_code=201)
-def add_genre_to_project(
-    project_id: int, 
-    genre_id: int,
-    db: Session = Depends(get_db)
-):
-    # Verify the project exists
-    db_project = db.query(ProjectModel).filter(ProjectModel.id == project_id).first()
-    if not db_project:
-        raise HTTPException(status_code=404, detail="Project not found")
-    
-    # Verify the genre exists
-    db_genre = db.query(GenreModel).filter(GenreModel.id == genre_id).first()
-    if not db_genre:
-        raise HTTPException(status_code=404, detail="Genre not found")
-    
-    # Check if relationship already exists
-    existing = db.query(ProjectGenreModel).filter(
-        ProjectGenreModel.project_id == project_id,
-        ProjectGenreModel.genre_id == genre_id
-    ).first()
-    
-    if existing:
-        raise HTTPException(status_code=400, detail="This genre is already in the project")
-    
-    # Create the relationship
-    db_project_genre = ProjectGenreModel(project_id=project_id, genre_id=genre_id)
-    db.add(db_project_genre)
-    db.commit()
-    
-    return {"message": "Genre added to project successfully"}
-
-
-@router.delete("/{project_id}/genres/{genre_id}")
-def remove_genre_from_project(
-    project_id: int, 
-    genre_id: int,
-    response: Response,
-    db: Session = Depends(get_db)
-):
-    # Find the relationship
-    db_project_genre = db.query(ProjectGenreModel).filter(
-        ProjectGenreModel.project_id == project_id,
-        ProjectGenreModel.genre_id == genre_id
-    ).first()
-    
-    if not db_project_genre:
-        raise HTTPException(status_code=404, detail="Genre not found in this project")
-    
-    # Delete the relationship
-    db.delete(db_project_genre)
-    db.commit()
-    
-    return Response(status_code = 200)
-
-@router.post("/{project_id}/conversation/", response_model=ConversationResponse, status_code=201)
-def create_conversation(
-    project_id: int, 
-    conversation: ConversationCreate, 
-    db: Session = Depends(get_db)
-):
-    # Verify the project exists
-    db_project = db.query(ProjectModel).filter(ProjectModel.id == project_id).first()
-    if not db_project:
-        raise HTTPException(status_code=404, detail=f"Project with ID {project_id} not found")
-    
-    # Check if a conversation already exists for this project
-    existing_conversation = db.query(ConversationModel).filter(
-        ConversationModel.project_id == project_id
-    ).first()
-    
-    if existing_conversation:
-        raise HTTPException(
-            status_code=400,
-            detail=f"A conversation already exists for project {project_id}"
-        )
-    
-    try:
-        # Create the conversation
-        db_conversation = ConversationModel(
-            project_id=project_id,
-            purpose=conversation.purpose,
-            tempo=conversation.tempo,
-            key_signature=conversation.key_signature,
-            mood=conversation.mood,
-            status=conversation.status
-        )
-        
-        db.add(db_conversation)
-        db.commit()
-        db.refresh(db_conversation)
-        
-        return db_conversation
-    
-    except IntegrityError as e:
-        db.rollback()
-        raise HTTPException(
-            status_code=400,
-            detail=f"Error creating conversation: {str(e)}"
-        )
-
-
-@router.get("/{project_id}/conversation/", response_model=ConversationResponse)
-def get_conversation(project_id: int, db: Session = Depends(get_db)):
-    # Verify the project exists
-    db_project = db.query(ProjectModel).filter(ProjectModel.id == project_id).first()
-    if not db_project:
-        raise HTTPException(status_code=404, detail=f"Project with ID {project_id} not found")
-    
-    # Get the conversation for this project
-    conversation = db.query(ConversationModel).filter(
-        ConversationModel.project_id == project_id
-    ).first()
-    
-    if not conversation:
-        raise HTTPException(
-            status_code=404,
-            detail=f"No conversation found for project {project_id}"
-        )
-    
-    return conversation
-
-
-@router.put("/{project_id}/conversation/", response_model=ConversationResponse)
-def update_conversation(
-    project_id: int,
-    conversation: ConversationUpdate,
-    db: Session = Depends(get_db)
-):
-    # Get the conversation for this project
-    db_conversation = db.query(ConversationModel).filter(
-        ConversationModel.project_id == project_id
-    ).first()
-    
-    if not db_conversation:
-        raise HTTPException(
-            status_code=404,
-            detail=f"No conversation found for project {project_id}"
-        )
-    
-    # Update the conversation fields
-    update_data = conversation.dict(exclude_unset=True)
-    for key, value in update_data.items():
-        setattr(db_conversation, key, value)
-    
-    try:
-        db.commit()
-        db.refresh(db_conversation)
-        return db_conversation
-    
-    except IntegrityError as e:
-        db.rollback()
-        raise HTTPException(
-            status_code=400,
-            detail=f"Error updating conversation: {str(e)}"
-        )

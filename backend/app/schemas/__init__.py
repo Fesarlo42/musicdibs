@@ -8,4 +8,4 @@ from .files import FileCreate, FileResponse
 from .messages import Message, MessageCreate
 from .conversations import ConversationCreate, ConversationUpdate, ConversationResponse
 from .registrations import RegistrationCreate, RegistrationResponse, RegistrationDetailResponse
-from .projects import ProjectCreate, ProjectUpdate, Project, ProjectResponse, ProjectList
+from .projects import ProjectCreate, ProjectUpdate, Project, ProjectResponse, ProjectList, ProjectStats

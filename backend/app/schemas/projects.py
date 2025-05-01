@@ -44,3 +44,8 @@ class ProjectList(BaseModel):
     page: int
     limit: int
     has_more: bool
+
+class ProjectStats(BaseModel):
+    total_projects: int
+    total_registrations: int
+    total_conversations: int

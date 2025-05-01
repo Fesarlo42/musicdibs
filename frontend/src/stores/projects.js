@@ -398,6 +398,23 @@ export const useProjectsStore = defineStore("projects", {
       }
     },
 
+    // Get projects stats
+    async fetchProjectsStats() {
+      this.isLoading = true;
+      this.error = null;
+
+      try {
+        const response = await api.get("/projects/stats");
+        return response.data;
+      } catch (error) {
+        this.error =
+          error.response?.data?.message || "Failed to fetch projects stats";
+        console.error("Fetch projects stats error:", error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
     // Reset store state
     resetState() {
       this.projects = [];
