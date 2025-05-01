@@ -6,6 +6,7 @@
     <div v-else class="card-body">
       <h2 class="card-title">Detalles del proyecto</h2>
       <template v-if="project">
+        <p v-if="editable">Pincha en la información que deseas editar.</p>
         <div class="grid grid-cols-2 gap-8">
           <div>
             <fieldset class="fieldset">

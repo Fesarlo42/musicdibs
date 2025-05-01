@@ -87,6 +87,10 @@ p {
   box-shadow: 16px 16px 0 0 theme("colors.secondary");
 }
 
+.musicdibs-shadow-neutral {
+  box-shadow: 16px 16px 0 0 theme("colors.neutral");
+}
+
 .musicdibs-card {
   @apply musicdibs-shadow rounded-xl bg-base-content p-5 text-base-200;
 }
@@ -99,6 +103,10 @@ p {
   @apply musicdibs-shadow-scondary;
 }
 
+.musicdibs-card.neutral {
+  @apply musicdibs-shadow-neutral;
+}
+
 .musicdibs-card .card-body {
   @apply p-0;
 }
@@ -109,6 +117,10 @@ p {
 
 .musicdibs-card.secondary .card-title {
   @apply text-secondary;
+}
+
+.musicdibs-card.neutral .card-title {
+  @apply text-neutral;
 }
 
 .logo {
@@ -148,7 +160,8 @@ p {
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
-.fieldset-legend {
+.fieldset-legend,
+.table th {
   @apply text-base-200;
 }
 
