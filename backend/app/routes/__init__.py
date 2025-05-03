@@ -5,3 +5,5 @@ from .genres import router as genres_router
 from .projects import router as projects_router
 from .files import router as files_router
 from .registrations import router as registration_router
+from .conversations import router as conversations_router
+from .messages import router as messages_router

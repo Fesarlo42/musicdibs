@@ -1,7 +1,9 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import List, Optional
 from enum import Enum
 from datetime import datetime
+
+from .messages import MessageResponse
 
 
 class ConversationStatus(str, Enum):
@@ -19,6 +21,7 @@ class ConversationBase(BaseModel):
 
 
 class ConversationCreate(ConversationBase):
+    project_id: int
     pass
 
 
@@ -33,7 +36,11 @@ class ConversationUpdate(BaseModel):
 class ConversationResponse(ConversationBase):
     id: int
     project_id: int
+    status: str
     created_at: datetime
     
     class Config:
         from_attributes = True
+
+class ConversationDetailResponse(ConversationResponse):
+    messages: List[MessageResponse] = []
