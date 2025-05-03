@@ -54,18 +54,21 @@ async def generate_ai_message(request: MessageGenerateRequest, db: Session = Dep
     
     # Generate AI response
     try:
-        if len(message_history) <= 1:  # If there is only the user message we just added
-            ai_content = await GeminiService.generate_initial_content(
-                conversation, 
-                request.user_message
-            )
-        else:
-            ai_content = await GeminiService.continue_conversation(
-                conversation,
-                message_history,
-                request.user_message
-            )
-        
+        try: 
+            if len(message_history) <= 1:  # If there is only the user message we just added
+                ai_content = await GeminiService.generate_initial_content(
+                    conversation, 
+                    request.user_message
+                )
+            else:
+                ai_content = await GeminiService.continue_conversation(
+                    conversation,
+                    message_history,
+                    request.user_message
+                )
+        except Exception as e: 
+            raise HTTPException(status_code=502, detail=str(e))
+
         # Save AI message
         ai_message = MessageModel(
             conversation_id=request.conversation_id,
