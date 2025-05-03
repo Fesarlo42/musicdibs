@@ -95,7 +95,7 @@ async def finish_conversation(
         db.add(db_file)
 
         # finish conversastion
-        conversation.status = "finished"
+        conversation.status = "completed"
 
         db.commit()
         db.refresh(db_file)

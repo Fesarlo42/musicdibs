@@ -62,6 +62,7 @@ onMounted(async () => {
   allGenres.value = await genresStore.fetchAllGenres();
 });
 
+// TODO: check credits and subtract credits or give error if user doesnt have enought
 const createProject = async (projectData) => {
   const payload = {
     name: projectData.name,
