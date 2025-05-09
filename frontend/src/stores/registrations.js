@@ -72,20 +72,6 @@ export const useRegistrationsStore = defineStore("registrations", {
           },
         );
         this.verification = response.data;
-        /*
-        // Mocked response for testing
-        this.verification = {
-          status: "success",
-          registration_id: "01",
-          registered_at: "2023-10-01T12:00:00Z",
-          registration_proof: "url",
-          project: {
-            id: "01",
-            name: "Musica linda",
-            author: "Maria Luiza",
-          },
-        };
-        */
         return this.verification;
       } catch (error) {
         this.error =
