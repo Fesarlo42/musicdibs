@@ -1,4 +1,3 @@
-<!-- ProjectPage.vue -->
 <template>
   <div class="p-4">
     <h1 class="text-2xl font-bold">Detalles del Proyecto</h1>
@@ -7,7 +6,8 @@
       v-if="
         useProjectsStore.error ||
         useGenresStore.error ||
-        useRegistrationsStore.error
+        useRegistrationsStore.error ||
+        localError
       "
     >
       <div
@@ -31,6 +31,9 @@
       >
         <span>{{ useRegistrationsStore.error }}</span>
       </div>
+      <div v-if="localError" role="alert" class="alert alert-soft alert-error">
+        <span>{{ localError }}</span>
+      </div>
     </section>
 
     <ProjectInfo
@@ -46,9 +49,8 @@
       @deleteFile="handleDeleteFile"
     />
 
-    <ProjectAiAssistant class="my-10" v-if="showAiChat" :project="project" />
-
     <ProjectRegistration
+      v-if="hasUploadableFiles"
       class="my-10"
       :isRegistered="isRegistered"
       :registration="ibsRegistration"
@@ -56,17 +58,29 @@
       :isLoading="registrationsStore.isLoading"
       @registerProject="handleRegisterProject"
     />
+
+    <ProjectAiAssistant
+      class="my-10"
+      v-if="showAiChat"
+      :project="project"
+      :messages="conversationsStore.messages"
+      :isLoading="conversationsStore.loading"
+      :status="conversationStatus"
+      @sendMessage="handleSendMessage"
+      @finishConversation="handleFinishConversation"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import { useProjectsStore } from "../stores/projects.js";
 import { useGenresStore } from "../stores/genres.js";
 import { useRegistrationsStore } from "../stores/registrations.js";
 import { useAuthStore } from "../stores/auth.js";
+import { useConversationsStore } from "../stores/conversations.js";
 
 import ProjectInfo from "../components/ProjectInfo.vue";
 import ProjectRegistration from "../components/ProjectRegistration.vue";
@@ -76,6 +90,7 @@ const projectsStore = useProjectsStore();
 const genresStore = useGenresStore();
 const registrationsStore = useRegistrationsStore();
 const authStore = useAuthStore();
+const conversationsStore = useConversationsStore();
 
 const route = useRoute();
 const router = useRouter();
@@ -85,13 +100,14 @@ const userId = ref(null);
 const project = ref(null);
 const projectFilesDownloadData = ref([]);
 const allGenres = ref([]);
+const showAiChat = ref(null);
+const conversationId = ref(null);
+const localError = ref(null);
 
 // computed properties
-const isRegistered = computed(
-  () => project.value?.registration?.registered_at != null,
-);
+const isRegistered = computed(() => project.value?.registration?.id != null);
 const isProjectOwner = computed(() => {
-  return project.value.user_id == userId.value;
+  return project.value?.user_id == userId.value;
 });
 const ibsRegistration = computed(() => {
   return registrationsStore.registration?.evidence_details;
@@ -118,7 +134,14 @@ const fileDownload = computed(() => {
 
   return fileData.download_url ? fileData.download_url : "";
 });
-const showAiChat = computed(() => false); // TODO: Implement AI chat logic
+const hasUploadableFiles = computed(() =>
+  project.value?.files?.some(
+    (file) => file.origin === "user_upload" || file.origin === "ai_generated",
+  ),
+);
+const conversationStatus = computed(
+  () => conversationsStore.conversation?.status || null,
+);
 
 onMounted(async () => {
   const ref = route.params.ref;
@@ -126,6 +149,7 @@ onMounted(async () => {
     project.value = await projectsStore.fetchProjectById(ref);
   } else {
     console.error("Missing project ref in route params");
+    return;
   }
 
   userId.value = authStore.user.id;
@@ -138,6 +162,16 @@ onMounted(async () => {
   allGenres.value = await genresStore.fetchAllGenres();
 
   await getFilesDownloadData();
+
+  showAiChat.value = await projectsStore.fetchConversation(
+    projectsStore.currentProject.id,
+  );
+
+  if (showAiChat.value) {
+    conversationId.value = showAiChat.value.id;
+    await conversationsStore.fetchMessages(conversationId.value);
+    await conversationsStore.getConversation(conversationId.value);
+  }
 
   await registrationsStore.getRegistration(projectsStore.currentProject.id);
 });
@@ -178,6 +212,31 @@ const handleDeleteFile = async (file) => {
 };
 
 const handleRegisterProject = async () => {
-  await registrationsStore.createRegistration(project.value.id);
+  if (hasUploadableFiles) {
+    await registrationsStore.createRegistration(project.value.id);
+    project.value = await projectsStore.fetchProjectById(ref);
+  } else {
+    localError.value(
+      "No puedes hacer registros sin ningun archivo. Por favo, sube o genera un archivo con nuestro asistente AI.",
+    );
+  }
+};
+
+const handleSendMessage = async (message) => {
+  if (conversationId.value) {
+    await conversationsStore.generateMessage({
+      conversation_id: conversationId.value,
+      user_message: message,
+    });
+    await conversationsStore.getConversation(conversationId.value);
+  }
+};
+
+const handleFinishConversation = async () => {
+  if (conversationId.value) {
+    await conversationsStore.finishConversation(conversationId.value);
+    await conversationsStore.getConversation(conversationId.value);
+    showAiChat.value = null;
+  }
 };
 </script>

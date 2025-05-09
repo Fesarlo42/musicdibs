@@ -1,6 +1,13 @@
 <template>
   <h1 class="text-2xl font-bold">Nuevo proyecto</h1>
-  <section v-if="useProjectsStore.error || useGenresStore.error">
+  <section
+    v-if="
+      useProjectsStore.error ||
+      useGenresStore.error ||
+      useCreditsStore.error ||
+      useConversationsStore.error
+    "
+  >
     <div
       v-if="useProjectsStore.error"
       role="alert"
@@ -15,9 +22,26 @@
     >
       <span>{{ useGenresStore.error }}</span>
     </div>
+    <div
+      v-if="useCreditsStore.error"
+      role="alert"
+      class="alert alert-soft alert-error"
+    >
+      <span>{{ useCreditsStore.error }}</span>
+    </div>
+    <div
+      v-if="useConversationsStore.error"
+      role="alert"
+      class="alert alert-soft alert-error"
+    >
+      <span>{{ useConversationsStore.error }}</span>
+    </div>
   </section>
 
-  <section class="my-10 flex justify-center py-10">
+  <section
+    v-if="creditsStore.balance && creditsStore.balance > 0"
+    class="my-10 flex justify-center py-10"
+  >
     <template v-if="!showUploadFileCard && !showAiCard">
       <ProjectNewForm :allGenres="allGenres" @createProject="createProject" />
     </template>
@@ -30,15 +54,32 @@
       <ProjectNewAi @createConversation="createConversation" />
     </template>
   </section>
+
+  <section v-else class="my-10 flex justify-center py-10">
+    <div class="musicdibs-card bg-base-100">
+      <div class="card-body">
+        <h2 class="card-title">¡No tienes créditos!</h2>
+        <p>No tienes créditos suficientes para crear un nuevo proyecto.</p>
+        <p>Para obtener más créditos, contacta con un administrador.</p>
+        <router-link to="/dashboard">
+          <button class="btn btn-primary btn-block mt-8 border-0">
+            Volver al dashboard
+          </button>
+        </router-link>
+      </div>
+    </div>
+  </section>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
 import { useGenresStore } from "../stores/genres.js";
 import { useProjectsStore } from "../stores/projects.js";
 import { useAuthStore } from "../stores/auth.js";
+import { useCreditsStore } from "../stores/credits.js";
+import { useConversationsStore } from "../stores/conversations.js";
 
 import ProjectNewForm from "../components/ProjectNewForm.vue";
 import ProjectNewFile from "../components/ProjectNewFile.vue";
@@ -47,6 +88,9 @@ import ProjectNewAi from "../components/ProjectNewAi.vue";
 const genresStore = useGenresStore();
 const projectsStore = useProjectsStore();
 const authStore = useAuthStore();
+const creditsStore = useCreditsStore();
+const conversationsStore = useConversationsStore();
+
 const router = useRouter();
 
 const userId = ref(null);
@@ -56,13 +100,12 @@ const showUploadFileCard = ref(false);
 const showAiCard = ref(false);
 
 onMounted(async () => {
-  const userData = JSON.parse(sessionStorage.getItem("user"));
   userId.value = authStore.user.id;
 
   allGenres.value = await genresStore.fetchAllGenres();
+  await creditsStore.fetchBalance(userId.value);
 });
 
-// TODO: check credits and subtract credits or give error if user doesnt have enought
 const createProject = async (projectData) => {
   const payload = {
     name: projectData.name,
@@ -77,6 +120,9 @@ const createProject = async (projectData) => {
     return;
   }
   newProjectId.value = createdProject.id;
+
+  // subtract a credit from the user
+  await creditsStore.removeCredits(userId.value, 1);
 
   if (projectData.projectType === "existing") {
     showUploadFileCard.value = true;
@@ -105,9 +151,9 @@ const createConversation = async (conversationData) => {
     status: "in_progress",
   };
 
-  await projectsStore.createConversation(newProjectId.value, payload);
+  await conversationsStore.createConversation(newProjectId.value, payload);
 
-  if (projectsStore.error) {
+  if (conversationsStore.error) {
     return;
   }
 

@@ -135,7 +135,7 @@ const projectsSummary = computed(() => {
 });
 const registeredProjectsSummary = computed(() => {
   return projectsStore.projects
-    .filter((project) => project.registration.registered_at)
+    .filter((project) => project.registration?.registered_at)
     .slice(0, 10);
 });
 

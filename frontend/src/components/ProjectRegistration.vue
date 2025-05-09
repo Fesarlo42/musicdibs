@@ -134,7 +134,7 @@
           ya no se podrán hacer cambios a este proyecto, así que revisalo bien.
         </p>
         <button
-          class="btn btn-secondary btn-sm btn-wide mt-6"
+          class="btn btn-secondary btn-wide mt-6"
           @click="registerProject"
         >
           <svg
