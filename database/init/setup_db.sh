@@ -19,13 +19,19 @@ if ! command -v mysql &> /dev/null; then
     exit 1
 fi
 
+# Start Cloud SQL Auth Proxy in background
+echo "🚀 Starting Cloud SQL Auth Proxy..."
+cloud-sql-proxy "$CLOUD_SQL_INSTANCE" &
+PROXY_PID=$!
+sleep 5
+
 # Prompt for MySQL root password
 read -sp "Enter MySQL root password: " ROOT_PASSWORD
 echo
 
 # Run schema.sql to create database & tables
 echo "📌 Creating database schema..."
-envsubst < "$(dirname "$0")/schema.sql" | mysql -u$MYSQL_USER -p$ROOT_PASSWORD
+envsubst < "$(dirname "$0")/schema.sql" | mysql -u$MYSQL_USER -p$ROOT_PASSWORD -h$MYSQL_HOST -P3306
 
 # Run users.sql to create users & set permissions
 echo "🔑 Setting up database users and permissions..."
@@ -38,5 +44,9 @@ if [[ $LOAD_SEEDS == "y" || $LOAD_SEEDS == "Y" ]]; then
     envsubst < "$(dirname "$0")/../seeds/dev_data.sql" | mysql -u$MYSQL_USER -p$ROOT_PASSWORD
     echo "✅ Seed data loaded successfully!"
 fi
+
+# Stop the proxy
+echo "🛑 Stopping Cloud SQL Auth Proxy..."
+kill $PROXY_PID
 
 echo "🎉 Database initialization completed successfully!"
