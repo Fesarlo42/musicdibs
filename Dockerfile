@@ -21,6 +21,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 COPY --from=backend-builder /app/backend/ ./backend/
 COPY --from=backend-builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=backend-builder /usr/local/bin /usr/local/bin
+
 # Copy the Vue build files to a static directory where the backend can serve them
 COPY --from=frontend-builder /app/frontend/dist ./backend/static
 
