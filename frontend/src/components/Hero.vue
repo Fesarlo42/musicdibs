@@ -18,7 +18,7 @@
           class="absolute inset-0 h-full w-full object-cover"
         >
           <source
-            src="../assets/videos/video_hero_musicdibs.mp4"
+            src="../assets/videos/Pieza_web_musicdibs.mp4"
             type="video/mp4"
           />
         </video>
