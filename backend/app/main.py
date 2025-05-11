@@ -1,6 +1,21 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import users_router, auth_router, credits_router, genres_router, projects_router, files_router, registration_router, conversations_router, messages_router
+import os
+
+from app.routes import (
+    users_router, 
+    auth_router, 
+    credits_router, 
+    genres_router, 
+    projects_router, 
+    files_router, 
+    registration_router,
+    conversations_router, 
+    messages_router
+)
+
 
 app = FastAPI()
 
@@ -18,16 +33,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(users_router, prefix="/users", tags=["users"])
-app.include_router(auth_router, prefix="/auth", tags=["auth"])
-app.include_router(credits_router, prefix="/credits", tags=["credits"])
-app.include_router(genres_router, prefix="/genres", tags=["genres"])
-app.include_router(projects_router, prefix="/projects", tags=["projects"])
-app.include_router(files_router, prefix="/files", tags=["files"])
+app.include_router(users_router, prefix="/api/users", tags=["users"])
+app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
+app.include_router(credits_router, prefix="/api/credits", tags=["credits"])
+app.include_router(genres_router, prefix="/api/genres", tags=["genres"])
+app.include_router(projects_router, prefix="/api/projects", tags=["projects"])
+app.include_router(files_router, prefix="/api/files", tags=["files"])
 app.include_router(conversations_router, prefix="/conversations", tags=["conversations"])
-app.include_router(messages_router, prefix="/messages", tags=["messages"])
-app.include_router(registration_router, prefix="/registrations", tags=["registrations"])
+app.include_router(messages_router, prefix="/api/messages", tags=["messages"])
+app.include_router(registration_router, prefix="/api/registrations", tags=["registrations"])
 
+# Serve static files
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
+
+# Catch-all to serve index.html for frontend routes
+@app.get("/{full_path:path}")
+async def serve_vue_app(full_path: str):
+    index_path = os.path.join("static", "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return {"error": "index.html not found"}
+
+# Health check endpoint
 @app.get("/healthz")
 def health_check():
     return {"status": "ok"}
