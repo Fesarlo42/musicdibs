@@ -8,6 +8,7 @@ app = FastAPI()
 origins = [
     "http://localhost:5173",  # frontend
     "http://127.0.0.1:5173",
+    "https://musicdibs.xyz"
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -26,3 +27,7 @@ app.include_router(files_router, prefix="/files", tags=["files"])
 app.include_router(conversations_router, prefix="/conversations", tags=["conversations"])
 app.include_router(messages_router, prefix="/messages", tags=["messages"])
 app.include_router(registration_router, prefix="/registrations", tags=["registrations"])
+
+@app.get("/healthz")
+def health_check():
+    return {"status": "ok"}
