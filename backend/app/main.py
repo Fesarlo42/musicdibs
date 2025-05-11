@@ -16,12 +16,11 @@ from app.routes import (
     messages_router
 )
 
-
 app = FastAPI()
 
 # CORS configuration
 origins = [
-    "http://localhost:5173",  # frontend
+    "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://musicdibs.xyz"
 ]
@@ -33,28 +32,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# API Routers
 app.include_router(users_router, prefix="/api/users", tags=["users"])
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 app.include_router(credits_router, prefix="/api/credits", tags=["credits"])
 app.include_router(genres_router, prefix="/api/genres", tags=["genres"])
 app.include_router(projects_router, prefix="/api/projects", tags=["projects"])
 app.include_router(files_router, prefix="/api/files", tags=["files"])
-app.include_router(conversations_router, prefix="/conversations", tags=["conversations"])
+app.include_router(conversations_router, prefix="/api/conversations", tags=["conversations"])
 app.include_router(messages_router, prefix="/api/messages", tags=["messages"])
 app.include_router(registration_router, prefix="/api/registrations", tags=["registrations"])
 
-# Serve static files
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
-
-# Catch-all to serve index.html for frontend routes
-@app.get("/{full_path:path}")
-async def serve_vue_app(full_path: str):
-    index_path = os.path.join("static", "index.html")
-    if os.path.exists(index_path):
-        return FileResponse(index_path)
-    return {"error": "index.html not found"}
-
-# Health check endpoint
 @app.get("/api/healthz")
 def health_check():
     return {"status": "ok"}
+
+# Serve static files for frontend
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+# Catch-all: return index.html for all non-API routes
+@app.get("/{full_path:path}")
+async def serve_vue_app(full_path: str):
+    index_path = os.path.join(static_dir, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return {"error": "index.html not found"}
