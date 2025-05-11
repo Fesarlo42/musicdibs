@@ -55,6 +55,6 @@ async def serve_vue_app(full_path: str):
     return {"error": "index.html not found"}
 
 # Health check endpoint
-@app.get("/healthz")
+@app.get("/api/healthz")
 def health_check():
     return {"status": "ok"}
