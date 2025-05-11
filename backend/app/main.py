@@ -47,7 +47,7 @@ def health_check():
     return {"status": "ok"}
 
 # Serve static files for frontend
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
+app.mount("/static", StaticFiles(directory="static", html=True), name="static")
 
 # Catch-all: return index.html for all non-API routes
 @app.get("/{full_path:path}")
