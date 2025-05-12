@@ -31,7 +31,7 @@ def get_credits_balance(user_id: int, db: Session = Depends(get_db)):
     
     return {
         "user_id": user_id,
-        "total_credits": credits - debits
+        "total_credits": int(credits - debits)
     } 
     
 @router.post("/add", response_model=CreditsBalance)
@@ -55,7 +55,7 @@ def add_credits(credit_data: CreditsAdd, db: Session = Depends(get_db)):
 
         balance = CreditsBalance(
             user_id=credit_data.user_id,
-            total_credits=get_credits_balance(credit_data.user_id, db)
+            total_credits=int(get_credits_balance(credit_data.user_id, db))
         )
         
         return balance
@@ -98,7 +98,7 @@ def remove_credits(credit_data: CreditsRemove, db: Session = Depends(get_db)):
         
         balance = CreditsBalance(
             user_id=credit_data.user_id,
-            total_credits=get_credits_balance(credit_data.user_id, db)
+            total_credits=int(get_credits_balance(credit_data.user_id, db))
         )
         
         return balance
@@ -108,20 +108,6 @@ def remove_credits(credit_data: CreditsRemove, db: Session = Depends(get_db)):
             status_code=400,
             detail=f"Error removing credits: {str(e)}"
         )
-
-    @router.get("/balance/{user_id}", response_model=CreditsBalance)
-    def get_balance(user_id: int, db: Session = Depends(get_db)):
-        # Verify user exists
-        user = db.query(User).filter(User.id == user_id).first()
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-        
-        balance = CreditsBalance(
-            user_id=user_id,
-            total_credits=get_credits_balance(user_id, db)
-        )
-        
-        return balance
 
 @router.get("/history/{user_id}", response_model=CreditsList)
 def get_history(user_id: int, skip: int = Query(0, ge=0), limit: int = Query(10, ge=1), db: Session = Depends(get_db)):
