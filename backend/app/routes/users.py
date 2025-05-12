@@ -19,7 +19,7 @@ from app.services.ibs_services import post_signature, put_signature, get_signatu
 
 router = APIRouter()
 
-@router.get("/", response_model=List[User])
+@router.get("", response_model=List[User])
 def get_users(db: Session = Depends(get_db)):
     users = db.query(UserModel).all()
     return users
@@ -33,7 +33,7 @@ def get_user(user_id: int, response: Response, db: Session = Depends(get_db)):
 
     return user
 
-@router.post("/", response_model=User, status_code=201)
+@router.post("", response_model=User, status_code=201)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
     # Convert Pydantic UserCreate to SQLAlchemy UserModel
     try:

@@ -153,7 +153,7 @@ def get_project(project_id: int, db: Session = Depends(get_db)):
     
     return response_data
 
-@router.post("/", response_model=ProjectResponse, status_code=201)
+@router.post("", response_model=ProjectResponse, status_code=201)
 def create_project(project: ProjectCreate, db: Session = Depends(get_db)):
     try:
         # Create the project first without genres

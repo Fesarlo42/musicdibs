@@ -16,7 +16,7 @@ from app.services.files_services import upload_generated_file, get_presigned_url
 
 router = APIRouter()
 
-@router.post("/", response_model=ConversationResponse)
+@router.post("", response_model=ConversationResponse)
 async def create_conversation(
     conversation: ConversationCreate, 
     db: Session = Depends(get_db)
