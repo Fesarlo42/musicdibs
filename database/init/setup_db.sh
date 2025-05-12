@@ -1,5 +1,4 @@
 #!/bin/bash
-# init_db.sh - Database initialization script
 
 set -e  # Exit on error
 

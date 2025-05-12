@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 from app.routes import (
     users_router, 
@@ -52,4 +53,8 @@ app.mount("/static", StaticFiles(directory="static", html=True), name="static")
 # Catch-all: return index.html for all non-API routes
 @app.get("/{full_path:path}")
 async def serve_vue_app(full_path: str):
+    file_path = os.path.join("static", full_path)
+    if os.path.exists(file_path):
+        return FileResponse(file_path)
+    
     return FileResponse("static/index.html")
