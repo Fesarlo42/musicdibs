@@ -16,7 +16,7 @@ from app.routes import (
     messages_router
 )
 
-app = FastAPI()
+app = FastAPI(debug=True)
 
 # CORS configuration
 origins = [

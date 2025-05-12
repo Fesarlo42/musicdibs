@@ -167,7 +167,7 @@ onMounted(async () => {
     projectsStore.currentProject.id,
   );
 
-  if (showAiChat.value) {
+  if (showAiChat.value && showAiChat.value.id) {
     conversationId.value = showAiChat.value.id;
     await conversationsStore.fetchMessages(conversationId.value);
     await conversationsStore.getConversation(conversationId.value);

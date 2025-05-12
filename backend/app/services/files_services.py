@@ -56,6 +56,10 @@ def get_presigned_url(object_key: str) -> str:
     blob = bucket.blob(object_key)
 
     # Generate a signed URL for the blob (valid for 1 hour)
-    url = blob.generate_signed_url(expiration=timedelta(seconds=3600), method="GET")
+    url = blob.generate_signed_url(
+        expiration=timedelta(seconds=3600), 
+        method="GET",
+        version="v4"
+    )
 
     return url
