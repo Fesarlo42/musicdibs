@@ -1,12 +1,17 @@
 from uuid import uuid4
 from fastapi import UploadFile
 from google.cloud import storage
+from google.oauth2 import service_account
 from datetime import timedelta
 from io import BytesIO
 import os
+import json
 
-storage_client = storage.Client()
-BUCKET_NAME = os.getenv("GCS_BUCKET_NAME")  # Make sure the bucket name is set in your environment
+# configure google storage client
+service_account_info = json.loads(os.getenv("GCS_SERVICE_ACCOUNT_KEY"))
+credentials = service_account.Credentials.from_service_account_info(service_account_info)
+storage_client = storage.Client(credentials=credentials)
+BUCKET_NAME = os.getenv("GCS_BUCKET_NAME")
 
 def upload_file(file: UploadFile) -> str:
     object_key = f"{uuid4()}_{file.filename}"
