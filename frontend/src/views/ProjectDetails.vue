@@ -140,7 +140,7 @@ const hasUploadableFiles = computed(() =>
   ),
 );
 const conversationStatus = computed(
-  () => conversationsStore.conversation?.status || null,
+  () => conversationsStore.currentConversation?.status || null,
 );
 
 onMounted(async () => {
@@ -163,8 +163,7 @@ onMounted(async () => {
 
   await getFilesDownloadData();
 
-  showAiChat.value = project.value.conversations;
-
+  showAiChat.value = await projectsStore.fetchConversation(project.value.id);
   if (showAiChat.value && showAiChat.value.id) {
     conversationId.value = showAiChat.value.id;
     await conversationsStore.fetchMessages(conversationId.value);

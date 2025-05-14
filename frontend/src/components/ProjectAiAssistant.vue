@@ -32,7 +32,7 @@
       </div>
 
       <div
-        class="chat-container max-h-80 space-y-2 overflow-y-auto rounded-md border border-gray-300 p-3"
+        class="chat-container max-h-[70vh] space-y-2 overflow-y-auto rounded-md border border-gray-300 p-3"
         ref="chatContainer"
       >
         <div
@@ -49,6 +49,10 @@
             {{ msg.content }}
           </div>
         </div>
+        <div v-if="isLoading && sentMessage != ''" class="chat chat-end">
+          <div class="chat-bubble-custom chat-bubble">{{ sentMessage }}</div>
+        </div>
+        <span v-if="isLoading" class="loading loading-ring loading-lg"></span>
       </div>
 
       <template v-if="status == 'in_progress'">
@@ -112,6 +116,7 @@ const props = defineProps({
 const emit = defineEmits(["sendMessage", "finishConversation"]);
 
 const newMessage = ref("");
+const sentMessage = ref("");
 const chatContainer = ref(null);
 
 // Scroll to bottom function using Vue's ref system
@@ -124,11 +129,24 @@ const scrollToBottom = async () => {
 
 // Watch for changes in messages to scroll to bottom
 watch(
-  () => props.messages,
+  () => [props.messages, props.isLoading],
   () => {
     scrollToBottom();
   },
   { deep: true },
+);
+
+watch(
+  () => props.messages,
+  (messages) => {
+    console.log("messages", messages);
+    if (messages.length === 0 && !newMessage.value) {
+      newMessage.value = props.project?.description || "";
+    } else {
+      newMessage.value = "";
+    }
+  },
+  { immediate: true },
 );
 
 onMounted(() => {
@@ -138,6 +156,7 @@ onMounted(() => {
 const handleSendMessage = (e) => {
   if (newMessage.value.trim() && !props.isLoading) {
     emit("sendMessage", newMessage.value.trim());
+    sentMessage.value = newMessage.value;
     newMessage.value = "";
   }
 };

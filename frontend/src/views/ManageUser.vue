@@ -171,10 +171,10 @@ onMounted(async () => {
 });
 
 const handleDeleteUser = async () => {
-  const confirmed = confirm(
+  let confirm = window.confirm(
     "¿Estás seguro de que quieres eliminar ese usuario? Esta acción no se puede deshacer.",
   );
-  if (confirmed) {
+  if (confirm) {
     await usersStore.deleteUser(userData.value.id);
     router.push("/dashboard_admin");
   }

@@ -71,6 +71,11 @@ p {
   @apply tracking-wide;
 }
 
+.clickable:hover {
+  cursor: pointer;
+  filter: brightness(70%);
+}
+
 .bg-musicdibs {
   background: linear-gradient(160deg, #7789c9, #2e3c87, #39205e, #0d0e20);
   background-attachment: fixed;
@@ -179,6 +184,10 @@ p {
 .textarea,
 .select {
   @apply w-full border-gray-400 bg-base-content;
+}
+.textarea:has(> textarea[disabled]),
+.textarea:is(:disabled, [disabled]) {
+  background-color: var(--slate-400);
 }
 
 input.primary-content {

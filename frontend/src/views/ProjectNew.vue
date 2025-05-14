@@ -149,14 +149,15 @@ const createConversation = async (conversationData) => {
     key_signature: conversationData.key_signature,
     mood: conversationData.mood,
     status: "in_progress",
+    project_id: newProjectId.value,
   };
 
-  await conversationsStore.createConversation(newProjectId.value, payload);
+  await conversationsStore.createConversation(payload);
 
   if (conversationsStore.error) {
     return;
   }
 
-  router.push(`/projects/${newProjectId}`);
+  router.push(`/projects/${newProjectId.value}`);
 };
 </script>

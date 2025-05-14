@@ -320,7 +320,7 @@ export const useProjectsStore = defineStore("projects", {
       this.error = null;
 
       try {
-        const response = await api.get(`/projects/${projectId}/conversation/`);
+        const response = await api.get(`/projects/${projectId}/conversation`);
 
         // If the current project is the one we're fetching conversation for, update it
         if (this.currentProject && this.currentProject.id === projectId) {

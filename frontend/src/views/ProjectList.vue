@@ -12,10 +12,11 @@
             <li class="flex items-center justify-between p-2">
               <p class="pl-12">Titulo</p>
               <div
-                class="flex w-[25%] items-center justify-between text-center"
+                class="flex w-[30%] items-center justify-between text-center"
               >
-                <p>Actualizado en</p>
-                <p>Registrar</p>
+                <p class="px-2">Actualizado en</p>
+                <p class="px-2">Registrar</p>
+                <p class="px-2">Borrar</p>
               </div>
             </li>
             <li v-for="project in filteredProjects" :key="project.id">
@@ -25,6 +26,8 @@
                 :isSummary="false"
                 :registrationDate="project.registration?.registered_at"
                 :lastUpdated="project.updated_at"
+                @registerProject="handleRegister"
+                @deleteProject="handleDelete"
               />
             </li>
           </ul>
@@ -56,12 +59,15 @@ import { onMounted, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import { useProjectsStore } from "../stores/projects.js";
+import { useRegistrationsStore } from "../stores/registrations.js";
 import { useAuthStore } from "../stores/auth.js";
 
 import ProjectListItem from "../components/ProjectListItem.vue";
 
 const projectsStore = useProjectsStore();
+const registrationsStore = useRegistrationsStore();
 const authStore = useAuthStore();
+
 const route = useRoute();
 const router = useRouter();
 
@@ -95,5 +101,29 @@ const filteredProjects = computed(() => {
 
 const goToPage = (page) => {
   router.push({ query: { ...route.query, page } });
+};
+
+const handleRegister = async (projectId) => {
+  const projectData = await projectsStore.fetchProjectById(projectId);
+
+  if (
+    projectData?.files?.some(
+      (file) => file.origin === "user_upload" || file.origin === "ai_generated",
+    )
+  ) {
+    await registrationsStore.createRegistration(projectId);
+    loadProjects();
+  } else {
+    alert("No se puede registrar proyectos sin archivos.");
+  }
+};
+const handleDelete = async (projectId) => {
+  console.log(projectId.projectId);
+  let confirm = window.confirm(
+    "¿Estás seguro de que quieres eliminar ese proyecto? Esta acción no se puede deshacer.",
+  );
+  if (confirm) {
+    await projectsStore.deleteProject(projectId.projectId);
+  }
 };
 </script>

@@ -61,10 +61,10 @@ const updateUser = async (form) => {
 };
 
 const handleDeleteUser = async () => {
-  const confirmed = confirm(
+  let confirm = window.confirm(
     "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.",
   );
-  if (confirmed) {
+  if (confirm) {
     await usersStore.deleteUser(userData.value.id);
     authStore.logout();
   }
