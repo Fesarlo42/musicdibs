@@ -214,8 +214,14 @@ const handleNewFile = async (file) => {
 };
 
 const handleDeleteFile = async (file) => {
-  await projectsStore.deleteProjectFile(file.id);
-  project.value = await projectsStore.fetchProjectById(project.value.id);
+  let confirm = window.confirm(
+    "¿Estas seguro que desas borrar el archivo? Esta acción no se puede deshacer",
+  );
+
+  if (confirm) {
+    await projectsStore.deleteProjectFile(file.id);
+    project.value = await projectsStore.fetchProjectById(project.value.id);
+  }
 };
 
 const handleRegisterProject = async () => {
