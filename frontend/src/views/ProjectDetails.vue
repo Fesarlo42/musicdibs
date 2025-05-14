@@ -202,17 +202,26 @@ const handleUpdateProject = async (updatedData) => {
 };
 
 const handleNewFile = async (file) => {
-  console.log(file);
+  if (hasUploadableFiles) {
+    alert(
+      "Primero hay que borrar el archivo anterior antes de subir uno nuevo",
+    );
+    return;
+  }
+
+  await projectsStore.uploadProjectFile(project.value.id, file);
+  project.value = await projectsStore.fetchProjectById(project.value.id);
 };
 
 const handleDeleteFile = async (file) => {
-  console.log(file);
+  await projectsStore.deleteProjectFile(file.id);
+  project.value = await projectsStore.fetchProjectById(project.value.id);
 };
 
 const handleRegisterProject = async () => {
   if (hasUploadableFiles) {
     await registrationsStore.createRegistration(project.value.id);
-    project.value = await projectsStore.fetchProjectById(ref);
+    project.value = await projectsStore.fetchProjectById(project.value.id);
   } else {
     localError.value(
       "No puedes hacer registros sin ningun archivo. Por favo, sube o genera un archivo con nuestro asistente AI.",
