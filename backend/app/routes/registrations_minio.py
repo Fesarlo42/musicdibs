@@ -210,8 +210,9 @@ async def create_registration(
 
     try:
         for file_db in files:
-            # Get file from storage
-            file_content = get_file(file_db.object_key)
+            # Get file from storage (MinIO in this case)
+            minio_response = get_file(file_db.object_key)
+            file_content = minio_response.read() 
             
             # Base64 encode the file content
             base64_content = base64.b64encode(file_content).decode("utf-8")
@@ -222,6 +223,7 @@ async def create_registration(
                 "file": base64_content
             })
             
+            minio_response.close()
     except Exception as e:
         raise HTTPException(
             status_code=500,
