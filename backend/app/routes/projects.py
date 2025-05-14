@@ -73,9 +73,11 @@ def remove_genre_from_project(
 # Conversation related endpoints
 @router.get("/{project_id}/conversation", response_model=ConversationResponse)
 def get_conversation(project_id: int, db: Session = Depends(get_db)):
+    print(f"Checking for project ID: {project_id}")
     # Verify the project exists
     db_project = db.query(ProjectModel).filter(ProjectModel.id == project_id).first()
     if not db_project:
+        print("Project not found")
         raise HTTPException(status_code=404, detail=f"Project with ID {project_id} not found")
     
     # Get the conversation for this project
@@ -84,11 +86,13 @@ def get_conversation(project_id: int, db: Session = Depends(get_db)):
     ).first()
     
     if not conversation:
+        print("No conversation found")
         raise HTTPException(
             status_code=404,
             detail=f"No conversation found for project {project_id}"
         )
     
+    print("Returning conversation:", conversation.id)
     return conversation
 
 

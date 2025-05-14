@@ -278,7 +278,6 @@ async def create_registration(
             detail=f"Registration failed: {str(e)}"
         )
 
-
 @router.get("/{project_id}", response_model=Dict[str, Any])
 async def get_registration(
     project_id: int,
