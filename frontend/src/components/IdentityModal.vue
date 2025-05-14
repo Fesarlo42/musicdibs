@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 
 import { useUsersStore } from "../stores/users.js";
 import { useAuthStore } from "../stores/auth.js";
@@ -40,22 +40,28 @@ const authStore = useAuthStore();
 const usersStore = useUsersStore();
 
 const sigStatus = ref("");
+let interval = null;
 
 onMounted(async () => {
-  const hasKyc = await usersStore.getSignatureInfo(authStore.user.id);
-  console.log("hasKyc", hasKyc);
-
-  sigStatus.value = hasKyc.status;
-
-  if (
-    hasKyc.status == "not_found" ||
-    hasKyc.status == "created" ||
-    hasKyc.status == "failed"
-  ) {
-    const modal = document.getElementById("ibs_sig_modal");
-    modal.showModal();
-  }
+  await fetchSignatureInfo();
+  interval = setInterval(fetchSignatureInfo, 5000);
 });
+
+onUnmounted(() => {
+  if (interval) clearInterval(interval);
+});
+
+const fetchSignatureInfo = async () => {
+  const sigInfo = await usersStore.getSignatureInfo(authStore.user.id);
+  sigStatus.value = sigInfo.status;
+
+  if (sigInfo.status === "success") {
+    document.getElementById("ibs_sig_modal")?.close();
+    clearInterval(interval);
+  } else {
+    document.getElementById("ibs_sig_modal")?.showModal();
+  }
+};
 
 const handleKyc = async () => {
   const kycData = await usersStore.makeSignature(authStore.user.id);

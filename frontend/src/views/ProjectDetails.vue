@@ -163,9 +163,7 @@ onMounted(async () => {
 
   await getFilesDownloadData();
 
-  showAiChat.value = await projectsStore.fetchConversation(
-    projectsStore.currentProject.id,
-  );
+  showAiChat.value = project.value.conversations;
 
   if (showAiChat.value && showAiChat.value.id) {
     conversationId.value = showAiChat.value.id;

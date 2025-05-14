@@ -157,40 +157,6 @@ def get_project(project_id: int, db: Session = Depends(get_db)):
     
     return response_data
 
-@router.post("", response_model=ProjectResponse, status_code=201)
-def create_project(project: ProjectCreate, db: Session = Depends(get_db)):
-    try:
-        # Create the project first without genres
-        db_project = ProjectModel(
-            name=project.name,
-            description=project.description,
-            user_id=project.user_id
-        )
-        
-        db.add(db_project)
-        db.flush()  # This assigns an ID to db_project but doesn't commit yet
-        
-        # Now create the project_genre relationships
-        for genre_id in project.project_genres:
-            db_project_genre = ProjectGenreModel(
-                project_id=db_project.id,
-                genre_id=genre_id
-            )
-            db.add(db_project_genre)
-        
-        db.commit()
-        db.refresh(db_project)
-        
-        return db_project
-
-    except IntegrityError as e:
-        db.rollback()
-        raise HTTPException(
-            status_code=400,
-            detail=f"Error creating project: {str(e)}"
-        )
-
-
 @router.put("/{project_id}", response_model=ProjectResponse)
 def update_project(project_id: int, updated_project: ProjectUpdate, db: Session = Depends(get_db)):
     db_project = db.query(ProjectModel).filter(ProjectModel.id == project_id).first()
@@ -237,3 +203,37 @@ def delete_project(project_id: int,  response: Response, db: Session = Depends(g
         )
 
     return Response(status_code = 200)
+
+@router.post("", response_model=ProjectResponse, status_code=201)
+def create_project(project: ProjectCreate, db: Session = Depends(get_db)):
+    try:
+        # Create the project first without genres
+        db_project = ProjectModel(
+            name=project.name,
+            description=project.description,
+            user_id=project.user_id
+        )
+        
+        db.add(db_project)
+        db.flush()  # This assigns an ID to db_project but doesn't commit yet
+        
+        # Now create the project_genre relationships
+        for genre_id in project.project_genres:
+            db_project_genre = ProjectGenreModel(
+                project_id=db_project.id,
+                genre_id=genre_id
+            )
+            db.add(db_project_genre)
+        
+        db.commit()
+        db.refresh(db_project)
+        
+        return db_project
+
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error creating project: {str(e)}"
+        )
+
