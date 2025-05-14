@@ -17,8 +17,12 @@
           El proceso de creación de tu identidad digital ha fallado. Pincha en
           el botón abajo para volver a empezarlo.
         </p>
+        <p v-else-if="sigStatus == 'pending'">
+          Tu identidad digital ha sido creada con éxito. Ahora, solo queda
+          esperar a que sea aprobada, lo cual puede llevar hasta 48 horas.
+        </p>
       </div>
-      <div class="modal-action">
+      <div class="modal-action" v-if="sigStatus != 'pending'">
         <button
           class="btn btn-primary btn-block mt-4 border-0"
           @click="handleKyc"

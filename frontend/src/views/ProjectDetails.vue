@@ -202,13 +202,6 @@ const handleUpdateProject = async (updatedData) => {
 };
 
 const handleNewFile = async (file) => {
-  if (hasUploadableFiles) {
-    alert(
-      "Primero hay que borrar el archivo anterior antes de subir uno nuevo",
-    );
-    return;
-  }
-
   await projectsStore.uploadProjectFile(project.value.id, file);
   project.value = await projectsStore.fetchProjectById(project.value.id);
 };
