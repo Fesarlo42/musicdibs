@@ -94,7 +94,7 @@
         </div>
         <div
           v-else-if="registration && registration?.status != 'certified'"
-          class="grid grid-cols-3 grid-rows-5 gap-4"
+          class="grid grid-cols-3 gap-4"
         >
           <fieldset class="fieldset">
             <legend class="fieldset-legend">UUID</legend>
@@ -118,13 +118,9 @@
         </div>
         <div v-else>
           <p class="mb-5">
-            Hubo un problema para recuperar los datos del registro pero puedes
-            descargar el comprobante de registro pinchando el botón a
-            continuación.
+            Hubo un problema para recuperar los datos del registro. Vuelve a
+            intentar más tarde.
           </p>
-          <div class="btn btn-secondary">
-            <a :href="reciptDownload" target="_blank">Descargar comprobante</a>
-          </div>
         </div>
       </template>
       <template v-else>

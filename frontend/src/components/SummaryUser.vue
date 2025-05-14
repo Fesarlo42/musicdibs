@@ -79,8 +79,8 @@ const creditsStore = useCreditsStore();
 
 const totalProjects = computed(() => projectsStore.projects.length);
 const projectsRegisterd = computed(() => {
-  return projectsStore.projects.filter((project) =>
-    project.files.some((file) => file.origin === "receipt"),
+  return projectsStore.projects.filter(
+    (project) => project.registration && project.registration.ibs_id,
   );
 });
 const totalProjectsRegisterd = computed(() => projectsRegisterd.value.length);
