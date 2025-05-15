@@ -173,6 +173,10 @@ onMounted(async () => {
   await registrationsStore.getRegistration(projectsStore.currentProject.id);
 });
 
+const reloadProject = async () => {
+  project.value = await projectsStore.fetchProjectById(project.value.id);
+};
+
 const getFilesDownloadData = async () => {
   for (let file of projectsStore.currentProject.files) {
     const downloadedFile = await projectsStore.downloadFile(file.id);
@@ -198,11 +202,12 @@ const handleUpdateProject = async (updatedData) => {
   };
 
   await projectsStore.updateProject(project.value.id, payload);
+  reloadProject();
 };
 
 const handleNewFile = async (file) => {
   await projectsStore.uploadProjectFile(project.value.id, file);
-  project.value = await projectsStore.fetchProjectById(project.value.id);
+  reloadProject();
 };
 
 const handleDeleteFile = async (file) => {
@@ -212,14 +217,14 @@ const handleDeleteFile = async (file) => {
 
   if (confirm) {
     await projectsStore.deleteProjectFile(file.id);
-    project.value = await projectsStore.fetchProjectById(project.value.id);
+    reloadProject();
   }
 };
 
 const handleRegisterProject = async () => {
   if (hasUploadableFiles) {
     await registrationsStore.createRegistration(project.value.id);
-    project.value = await projectsStore.fetchProjectById(project.value.id);
+    setTimeout(reloadProject, 2000);
   } else {
     localError.value(
       "No puedes hacer registros sin ningun archivo. Por favo, sube o genera un archivo con nuestro asistente AI.",
@@ -242,6 +247,7 @@ const handleFinishConversation = async () => {
     await conversationsStore.finishConversation(conversationId.value);
     await conversationsStore.getConversation(conversationId.value);
     showAiChat.value = null;
+    reloadProject();
   }
 };
 </script>

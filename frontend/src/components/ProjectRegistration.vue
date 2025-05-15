@@ -93,7 +93,11 @@
           </div>
         </div>
         <div
-          v-else-if="registration && registration?.status != 'certified'"
+          v-else-if="
+            registration &&
+            registration?.status != 'certified' &&
+            registration?.id
+          "
           class="grid grid-cols-3 gap-4"
         >
           <fieldset class="fieldset">

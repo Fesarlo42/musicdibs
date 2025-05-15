@@ -120,7 +120,11 @@
               <div class="flex items-center gap-2">
                 <template v-if="userFile">
                   <p>{{ userFile.name || "-" }}</p>
-                  <a class="btn btn-ghost btn-sm" :href="fileDownloadUrl">
+                  <a
+                    class="btn btn-ghost btn-sm"
+                    :href="fileDownloadUrl"
+                    target="_blank"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
