@@ -53,9 +53,10 @@ def add_credits(credit_data: CreditsAdd, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(transaction)
 
+        current_balance = get_credits_balance(credit_data.user_id, db)
         balance = CreditsBalance(
             user_id=credit_data.user_id,
-            total_credits=int(get_credits_balance(credit_data.user_id, db))
+            total_credits=int(current_balance['total_credits'])
         )
         
         return balance
@@ -95,10 +96,11 @@ def remove_credits(credit_data: CreditsRemove, db: Session = Depends(get_db)):
         db.add(transaction)
         db.commit()
         db.refresh(transaction)
-        
+
+        current_balance = get_credits_balance(credit_data.user_id, db)
         balance = CreditsBalance(
             user_id=credit_data.user_id,
-            total_credits=int(get_credits_balance(credit_data.user_id, db))
+            total_credits=int(current_balance['total_credits'])
         )
         
         return balance
