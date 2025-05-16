@@ -19,100 +19,6 @@ from app.services.ibs_services import post_signature, put_signature, get_signatu
 
 router = APIRouter()
 
-@router.get("", response_model=List[User])
-def get_users(db: Session = Depends(get_db)):
-    users = db.query(UserModel).all()
-    return users
-
-@router.get("/{user_id}", response_model=Union[User, str])
-def get_user(user_id: int, response: Response, db: Session = Depends(get_db)):
-    # find the user by id or 404 if it doesnt exist
-    user = db.get(UserModel, user_id)
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    return user
-
-@router.post("", response_model=User, status_code=201)
-def create_user(user: UserCreate, db: Session = Depends(get_db)):
-    # Convert Pydantic UserCreate to SQLAlchemy UserModel
-    try:
-        db_user = UserModel(
-            email = user.email,
-            first_name = user.first_name,
-            last_name = user.last_name,
-            password=hash_password(user.password),
-            role = user.role,
-        )
-        
-        db.add(db_user)
-        db.commit()
-        db.refresh(db_user)
-
-        return User.from_orm(db_user)
-    except IntegrityError as e:
-        db.rollback()
-        raise HTTPException(
-            status_code=400,
-            detail=f"Error creating new user: {str(e)}"
-        )
-
-@router.put("/{user_id}", response_model=Union[User, str])
-def update_user(user_id: int, updated_user: UserUpdate, response: Response, db: Session = Depends(get_db)): 
-    # find the user by id and update it or 404 if it doesnt exist
-    user = db.get(UserModel, user_id)
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    # Convert pydantic model to dict, excluding unset fields
-    user_dict = updated_user.dict(exclude_unset=True)
-    
-    # Handle password hashing
-    if "password" in user_dict:
-        if not user_dict["password"]:
-            del user_dict["password"]
-        else:
-            user_dict["password"] = hash_password(user_dict["password"])
-    
-    # Update user attributes
-    for key, value in user_dict.items():
-        setattr(user, key, value)
-    
-    try:
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-        return user
-    except IntegrityError as e:
-        db.rollback()
-        raise HTTPException(
-            status_code=400,
-            detail=f"Error updating user: {str(e)}"
-        )
-
-
-@router.delete("/{user_id}", status_code=204)
-async def delete_user(user_id: int, response: Response, db: Session = Depends(get_db)): 
-    # find the user by id or 404 if it doesnt exist
-    user = db.get(UserModel, user_id)
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    # deletes user ibs signature if there is any
-    if user.ibs_sig:
-        await delete_signature(user.ibs_sig)
-
-    try:
-        db.delete(user)
-        db.commit()
-    except IntegrityError as e:
-        db.rollback()
-        raise HTTPException(
-            status_code=400,
-            detail=f"Error deleting user: {str(e)}"
-        )
-
-    return Response(status_code = 200)
 
 
 @router.get("/{user_id}/projects", response_model=ProjectList)
@@ -239,3 +145,115 @@ async def get_user_signature(user_id: int, response: Response, db: Session = Dep
 
     except httpx.HTTPError as e:
         raise HTTPException(status_code=502, detail=f"External API error: {str(e)}")
+
+@router.get("/{user_id}", response_model=Union[User, str])
+def get_user(user_id: int, response: Response, db: Session = Depends(get_db)):
+    # find the user by id or 404 if it doesnt exist
+    user = db.get(UserModel, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return user
+
+@router.put("/{user_id}", response_model=Union[User, str])
+def update_user(user_id: int, updated_user: UserUpdate, response: Response, db: Session = Depends(get_db)): 
+    # find the user by id and update it or 404 if it doesnt exist
+    user = db.get(UserModel, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Convert pydantic model to dict, excluding unset fields
+    user_dict = updated_user.dict(exclude_unset=True)
+    
+    # Handle password hashing
+    if "password" in user_dict:
+        if not user_dict["password"]:
+            del user_dict["password"]
+        else:
+            user_dict["password"] = hash_password(user_dict["password"])
+    
+    # Update user attributes
+    for key, value in user_dict.items():
+        setattr(user, key, value)
+    
+    try:
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        return user
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error updating user: {str(e)}"
+        )
+
+@router.delete("/{user_id}", status_code=204)
+async def delete_user(user_id: int, response: Response, db: Session = Depends(get_db)): 
+    # find the user by id or 404 if it doesnt exist
+    user = db.get(UserModel, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # deletes user ibs signature if there is any
+    if user.ibs_sig:
+        try:
+            await delete_signature(user.ibs_sig)
+        except httpx.HTTPStatusError as e:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Error deleting signature from external service: {str(e)}"
+            )
+        except Exception as e:
+            # Handle any other exceptions from the API call
+            raise HTTPException(
+                status_code=500,
+                detail=f"Unexpected error during signature deletion: {str(e)}"
+            )
+
+    try:
+        db.delete(user)
+        db.commit()
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error deleting user: {str(e)}"
+        )
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Unexpected error deleting user: {str(e)}"
+        )
+
+    return Response(status_code = 204)
+
+@router.get("", response_model=List[User])
+def get_users(db: Session = Depends(get_db)):
+    users = db.query(UserModel).all()
+    return users
+
+@router.post("", response_model=User, status_code=201)
+def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    # Convert Pydantic UserCreate to SQLAlchemy UserModel
+    try:
+        db_user = UserModel(
+            email = user.email,
+            first_name = user.first_name,
+            last_name = user.last_name,
+            password=hash_password(user.password),
+            role = user.role,
+        )
+        
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+
+        return User.from_orm(db_user)
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error creating new user: {str(e)}"
+        )
