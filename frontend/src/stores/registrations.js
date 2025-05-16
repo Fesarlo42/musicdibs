@@ -18,6 +18,7 @@ export const useRegistrationsStore = defineStore("registrations", {
 
       try {
         const response = await api.post(`/registrations/${projectId}`);
+        console.log(response.data);
         this.registration = response.data;
         return this.registration;
       } catch (error) {
@@ -93,7 +94,6 @@ export const useRegistrationsStore = defineStore("registrations", {
       this.error = null;
 
       try {
-        // TODO: verificar isso também
         // Open the receipt URL in a new tab or window
         window.open(receiptUrl, "_blank");
         return true;

@@ -77,17 +77,21 @@
           </button>
         </form>
 
-        <p>
-          ¿Estas contento con lo que el asistente ha generado? Pincha el botón a
-          continuación para funalizar la conversación y poder registrar tu obra.
-        </p>
-        <button
-          class="btn btn-primary btn-outline btn-wide mt-4"
-          @click="handleFinishConversation"
-          :disabled="isLoading"
-        >
-          Finalizar conversación
-        </button>
+        <div class="flex items-center">
+          <button
+            class="btn btn-primary btn-outline btn-wide mr-4"
+            @click="handleFinishConversation"
+            :disabled="isLoading"
+          >
+            Finalizar conversación
+          </button>
+          <p>
+            Si estas contento con lo que el asistente ha generado, pincha el
+            botón a continuación para finalizar la conversación y poder
+            registrar la obra. Una vez finalizado, no se puede volver a acceder
+            a esta conversación.
+          </p>
+        </div>
       </template>
       <p v-else>Este asistente ya ha sido completado, y no se puede cambiar.</p>
     </div>

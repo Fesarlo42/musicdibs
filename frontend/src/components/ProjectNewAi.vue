@@ -11,7 +11,7 @@
           </fieldset>
 
           <fieldset class="fieldset">
-            <legend class="fieldset-legend">Tempo de la obra</legend>
+            <legend class="fieldset-legend">Tempo de la obra (en BPM)</legend>
             <input v-model="form.tempo" class="input" autofocus />
           </fieldset>
         </div>

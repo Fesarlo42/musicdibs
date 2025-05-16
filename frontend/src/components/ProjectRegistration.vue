@@ -92,14 +92,7 @@
             <a :href="reciptDownload" target="_blank">Descargar comprobante</a>
           </div>
         </div>
-        <div
-          v-else-if="
-            registration &&
-            registration?.status != 'certified' &&
-            registration?.id
-          "
-          class="grid grid-cols-3 gap-4"
-        >
+        <div v-else class="grid grid-cols-3 gap-4">
           <fieldset class="fieldset">
             <legend class="fieldset-legend">UUID</legend>
             <p>{{ registration?.id || "-" }}</p>
@@ -119,12 +112,6 @@
               {{ registration?.status || "-" }}
             </p>
           </fieldset>
-        </div>
-        <div v-else>
-          <p class="mb-5">
-            Hubo un problema para recuperar los datos del registro. Vuelve a
-            intentar más tarde.
-          </p>
         </div>
       </template>
       <template v-else>

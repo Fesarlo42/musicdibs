@@ -53,7 +53,7 @@
       v-if="hasUploadableFiles"
       class="my-10"
       :isRegistered="isRegistered"
-      :registration="ibsRegistration"
+      :registration="registrationsStore.registration?.evidence_details || null"
       :reciptDownload="reciptDownload"
       :isLoading="registrationsStore.isLoading"
       @registerProject="handleRegisterProject"
@@ -108,9 +108,6 @@ const localError = ref(null);
 const isRegistered = computed(() => project.value?.registration?.id != null);
 const isProjectOwner = computed(() => {
   return project.value?.user_id == userId.value;
-});
-const ibsRegistration = computed(() => {
-  return registrationsStore.registration?.evidence_details;
 });
 const reciptDownload = computed(() => {
   const reciptData = projectFilesDownloadData.value.find(
