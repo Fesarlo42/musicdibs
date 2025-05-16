@@ -7,10 +7,10 @@ from typing import List
 from app.database import get_db
 
 # pydantic models
-from app.schemas import MessageCreate, MessageResponse, MessageGenerateRequest
+from app.schemas import MessageResponse, MessageGenerateRequest
 
 # sqlalchemy models
-from app.models import Conversation as ConversationsModel, Message as MessageModel
+from app.models import Conversation as ConversationsModel, Message as MessageModel, ProjectGenre, Genre
 
 # services
 from app.services.ai_services import GeminiService
@@ -36,6 +36,17 @@ async def generate_ai_message(request: MessageGenerateRequest, db: Session = Dep
     if not conversation:
         raise HTTPException(status_code=404, detail="Conversation not found")
     
+     # Fetch genres associated with the project
+    project_genres = db.query(ProjectGenre).filter(
+        ProjectGenre.project_id == conversation.project_id
+    ).join(Genre).all()
+    
+    # Format genres as a string
+    genres_string = ", ".join([pg.genre.name for pg in project_genres]) if project_genres else "No specific genre"
+    
+    # Add genres to the conversation object as a transient property
+    conversation.genres = genres_string
+
     # Save user message
     user_message = MessageModel(
         conversation_id=request.conversation_id,
@@ -55,7 +66,7 @@ async def generate_ai_message(request: MessageGenerateRequest, db: Session = Dep
     # Generate AI response
     try:
         try: 
-            if len(message_history) <= 1:  # If there is only the user message we just added
+            if len(message_history) <= 1:
                 ai_content = await GeminiService.generate_initial_content(
                     conversation, 
                     request.user_message

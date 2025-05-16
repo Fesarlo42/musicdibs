@@ -39,6 +39,7 @@ class GeminiService:
     Tempo: {conversation_data.tempo} BPM
     Armadura de tonalidad: {conversation_data.key_signature}
     Estado de ánimo: {conversation_data.mood}
+    Género: {conversation_data.genres}
 
     Ofrece contenido musical creativo y apropiado que se ajuste a estos parámetros.
     Céntrate en ser muy específico y apropiado para el contexto musical proporcionado.
@@ -53,6 +54,8 @@ class GeminiService:
     a todo lo anterior. No empieces desde cero cada vez.
 
     Esto ayuda al usuario a distinguir entre tus explicaciones y el contenido musical real.
+
+    Cuando termines tu respuesta siempre avise al usuario que si esta contento con el contenido generado, pinche el botón de finalizar la conversación para generar un archivo para registrar.
 
     Usuario: {user_message}
     """
@@ -124,6 +127,7 @@ class GeminiService:
             --- LA OBRA ---
 
             Esto ayuda al usuario a distinguir entre tus explicaciones y el contenido musical completo.
+            Cuando termines tu respuesta siempre avise al usuario que si esta contento con el contenido generado, pinche el botón de finalizar la conversación para generar un archivo para registrar.
             """
             
             # Add the last 4 messages for context
