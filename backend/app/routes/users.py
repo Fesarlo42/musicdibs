@@ -106,7 +106,7 @@ async def make_signature(user_id: int, response: Response, db: Session = Depends
             raise HTTPException(status_code=502, detail=f"External API error: {str(e)}")
 
     params = {
-        "signature_name": f"{user.id}"
+        "signature_name": f"{user.id}_{user.first_name}_{user.last_name}"
     }
 
     try:

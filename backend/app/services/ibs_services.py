@@ -12,10 +12,9 @@ def get_auth_headers() -> dict:
 
 # digital identity
 async def post_signature(params: dict) -> dict:
-    # TODO: add urls after deployment
     params["wizard"] = {
-        "ok_url": '',
-        "ko_url": ''
+        "ok_url": 'https://musicdibs.xyz/dashboard',
+        "ko_url": 'https://musicdibs.xyz/dashboard'
     }
 
     async with httpx.AsyncClient() as client:

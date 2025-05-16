@@ -32,7 +32,6 @@ class UserInDB(UserBase):
 class User(UserInDB):
     pass
 
-# TODO: implementar eso en el get users
 class UsersList(BaseModel):
     total: int
     users: List[UserInDB]
