@@ -54,7 +54,6 @@ async def delete_signature(sig_id: str) -> dict:
             headers=get_auth_headers()
         )
         response.raise_for_status()
-        return response.json()
 
 
 # blockchain registration
