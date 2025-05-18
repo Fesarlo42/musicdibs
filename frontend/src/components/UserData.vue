@@ -9,7 +9,7 @@
       </section>
       <p>Pincha en la información que deseas editar.</p>
       <template v-if="userData && userData.id">
-        <div class="grid grid-cols-2 gap-8">
+        <div class="grid-cols-2 gap-8 md:grid">
           <div>
             <fieldset class="fieldset">
               <legend class="fieldset-legend">Nombre</legend>

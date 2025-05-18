@@ -78,7 +78,7 @@
         </router-link>
       </div>
     </div>
-    <div class="flex w-[35%] items-center justify-between text-center">
+    <div class="flex items-center justify-between text-center md:w-[35%]">
       <div class="mx-5 flex items-center">{{ formattedLastUpdated }}</div>
       <div
         v-if="!registrationDate"

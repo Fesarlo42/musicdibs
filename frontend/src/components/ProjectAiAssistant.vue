@@ -1,5 +1,5 @@
 <template>
-  <div class="musicdibs-card mx-auto w-full rounded-box bg-base-100 shadow-lg">
+  <div class="musicdibs-card bg-base-100">
     <div class="card-body space-y-4">
       <h2 class="card-title">Asistente IA</h2>
 
@@ -77,7 +77,7 @@
           </button>
         </form>
 
-        <div class="flex items-center">
+        <div class="items-center md:flex">
           <button
             class="btn btn-primary btn-outline btn-wide mr-4"
             @click="handleFinishConversation"

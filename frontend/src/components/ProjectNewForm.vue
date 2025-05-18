@@ -3,7 +3,7 @@
     <div class="card-body">
       <h2 class="card-title">Detalles del proyecto</h2>
 
-      <div class="grid grid-cols-2 gap-8">
+      <div class="grid-cols-2 gap-8 md:grid">
         <div>
           <fieldset class="fieldset">
             <legend class="fieldset-legend">Nombre del proyecto</legend>

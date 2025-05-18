@@ -7,7 +7,7 @@
       <h2 class="card-title">Detalles del proyecto</h2>
       <template v-if="project">
         <p v-if="editable">Pincha en la información que deseas editar.</p>
-        <div class="grid grid-cols-2 gap-8">
+        <div class="grid-cols-2 gap-8 md:grid">
           <div>
             <fieldset class="fieldset">
               <legend class="fieldset-legend">Nombre</legend>

@@ -1,7 +1,7 @@
 <template>
   <div data-theme="synthwave" class="bg-musicdibs min-h-screen">
     <Topbar />
-    <main class="mx-auto max-w-full pt-20 sm:max-w-screen-lg">
+    <main class="mx-4 max-w-full pt-20 sm:max-w-screen-lg md:mx-auto">
       <router-view />
     </main>
     <Footer />

@@ -2,7 +2,7 @@
   <div class="musicdibs-card bg-base-100">
     <div class="card-body">
       <h2 class="card-title">Resumen</h2>
-      <div class="stats stats-vertical lg:stats-horizontal">
+      <div class="stats stats-vertical md:stats-horizontal">
         <div class="stat">
           <div class="stat-figure">
             <svg
@@ -22,7 +22,9 @@
             </svg>
           </div>
           <div class="stat-value">{{ totalUsers }}</div>
-          <div class="stat-title">Usuarios totales</div>
+          <div class="stat-title text-wrap lg:text-nowrap">
+            Usuarios totales
+          </div>
         </div>
 
         <div class="secondary stat">
@@ -41,7 +43,9 @@
             </svg>
           </div>
           <div class="stat-value">{{ totalProjectsCreated }}</div>
-          <div class="stat-title">Proyectos creados</div>
+          <div class="stat-title text-wrap lg:text-nowrap">
+            Proyectos creados
+          </div>
         </div>
 
         <div class="neutral stat">
@@ -60,7 +64,9 @@
             </svg>
           </div>
           <div class="stat-value">{{ totalProjectsRegistered }}</div>
-          <div class="stat-title">Proyectos registrados</div>
+          <div class="stat-title text-wrap lg:text-nowrap">
+            Proyectos registrados
+          </div>
         </div>
       </div>
     </div>

@@ -137,6 +137,10 @@ p {
   justify-content: center;
 }
 
+.dropdown-content {
+  background-color: var(--color-neutral);
+}
+
 .btn {
   @apply uppercase;
 }
@@ -242,6 +246,9 @@ input.primary-content {
   color: var(--color-neutral);
 }
 
+.stat {
+  grid-template-columns: auto 1fr;
+}
 @media screen and (max-width: 1024px) {
   .timeline > li {
     @apply mb-10;

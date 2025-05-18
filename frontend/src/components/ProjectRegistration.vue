@@ -9,15 +9,15 @@
 
         <div
           v-if="registration && registration?.status == 'certified'"
-          class="grid grid-cols-3 grid-rows-5 gap-4"
+          class="grid-cols-3 grid-rows-5 gap-4 md:grid"
         >
           <fieldset class="fieldset">
             <legend class="fieldset-legend">UUID</legend>
-            <p>{{ registration?.id || "-" }}</p>
+            <p class="break-all">{{ registration?.id || "-" }}</p>
           </fieldset>
           <fieldset class="fieldset">
             <legend class="fieldset-legend">Registrado el</legend>
-            <p>
+            <p class="break-all">
               {{ registration?.certification.timestamp || "-" }}
             </p>
           </fieldset>
@@ -33,33 +33,41 @@
 
           <fieldset class="fieldset">
             <legend class="fieldset-legend">Archivo</legend>
-            <p>
+            <p class="break-all">
               {{ registration?.payload.integrity[0].name || "-" }}
             </p>
           </fieldset>
           <fieldset class="fieldset">
             <legend class="fieldset-legend">Algorimo</legend>
-            <p>
+            <p class="break-all">
               {{ registration?.payload.integrity[0].algorithm || "-" }}
             </p>
           </fieldset>
           <fieldset class="fieldset">
             <legend class="fieldset-legend">Codificado en</legend>
-            <p>{{ registration?.payload.integrity[0].sanitizer || "-" }}</p>
+            <p class="break-all">
+              {{ registration?.payload.integrity[0].sanitizer || "-" }}
+            </p>
           </fieldset>
 
           <fieldset class="fieldset col-span-3">
             <legend class="fieldset-legend">Codigo de integridad</legend>
-            <p>{{ registration?.payload.integrity[0].checksum || "-" }}</p>
+            <p class="break-all">
+              {{ registration?.payload.integrity[0].checksum || "-" }}
+            </p>
           </fieldset>
 
           <fieldset class="fieldset">
             <legend class="fieldset-legend">Red blockchain</legend>
-            <p>{{ registration?.certification.network || "" }}</p>
+            <p class="break-all">
+              {{ registration?.certification.network || "" }}
+            </p>
           </fieldset>
           <fieldset class="fieldset">
             <legend class="fieldset-legend">Timestamp</legend>
-            <p>{{ registration?.certification.timestamp || "-" }}</p>
+            <p class="break-all">
+              {{ registration?.certification.timestamp || "-" }}
+            </p>
           </fieldset>
           <fieldset class="fieldset">
             <legend class="fieldset-legend">Verificar</legend>
@@ -86,13 +94,15 @@
 
           <fieldset class="fieldset col-span-2">
             <legend class="fieldset-legend">Hash</legend>
-            <p>{{ registration?.certification.hash || "-" }}</p>
+            <p class="break-all">
+              {{ registration?.certification.hash || "-" }}
+            </p>
           </fieldset>
-          <div class="btn btn-secondary btn-sm self-center">
+          <div class="btn btn-secondary btn-sm mt-4 self-center">
             <a :href="reciptDownload" target="_blank">Descargar comprobante</a>
           </div>
         </div>
-        <div v-else class="grid grid-cols-3 gap-4">
+        <div v-else class="grid-cols-3 gap-4 md:grid">
           <fieldset class="fieldset">
             <legend class="fieldset-legend">UUID</legend>
             <p>{{ registration?.id || "-" }}</p>

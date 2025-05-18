@@ -1,16 +1,16 @@
 <template>
   <div class="p-0">
     <Hero />
-    <section class="mt-10 pt-10">
+    <section class="mt-10 px-4 pt-10">
       <h2 class="text-center font-grace text-6xl tracking-wider">
         Tu creas, nosotros protegemos
       </h2>
     </section>
-    <section class="mt-11 pt-10 lg:mt-[-30px] lg:pt-0">
+    <section class="mt-11 px-4 pt-10 lg:mt-[-30px] lg:pt-0">
       <Instructions />
     </section>
-    <section class="my-10 py-10">
-      <div class="w-100 z-10 p-8 glass sm:w-3/5">
+    <section class="my-10 px-4 py-10">
+      <div class="w-100 z-10 mx-4 p-8 glass sm:w-3/5">
         <h3 class="mb-6 text-center font-grace text-5xl/normal tracking-wider">
           Te ayudamos a proteger tus derechos de autor
         </h3>
@@ -28,15 +28,15 @@
           parte del mundo.
         </p>
       </div>
-      <div class="guxa flex justify-end">
+      <div class="guxa justify-end sm:flex">
         <img
-          class="musicdibs-shadow-scondary max-w-xl rounded-3xl"
+          class="musicdibs-shadow-scondary mx-4 w-full max-w-xl rounded-3xl"
           src="../assets/images/chica_cantando.png"
           alt="Una chica cantando"
         />
       </div>
     </section>
-    <section class="my-10 py-10">
+    <section class="my-10 px-4 sm:py-10">
       <h2 class="mb-7 text-center text-4xl">
         Validez legal en más de 160 países
       </h2>

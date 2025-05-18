@@ -32,8 +32,8 @@
       <div
         class="relative z-10 flex min-h-screen items-center justify-center text-center text-neutral-content"
       >
-        <div class="max-w-4xl text-white">
-          <h1 class="mb-8 font-grace text-8xl tracking-wider">
+        <div class="max-w-4xl px-8 text-white">
+          <h1 class="my-9 font-grace text-8xl tracking-wider">
             Tu musica, siempre tuya
           </h1>
           <h2 class="mb-5 text-pretty text-2xl/9">

@@ -9,7 +9,7 @@
         <div>
           <fieldset class="fieldset">
             <legend class="fieldset-legend">ID</legend>
-            <p>{{ sigData.id }}</p>
+            <p class="break-all">{{ sigData.id }}</p>
           </fieldset>
         </div>
 

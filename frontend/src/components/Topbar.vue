@@ -1,7 +1,9 @@
 <template>
-  <div class="fixed left-0 right-0 top-0 z-20 h-20 bg-neutral p-2 shadow-md">
+  <div
+    class="fixed left-0 right-0 top-0 z-20 h-auto bg-neutral p-2 shadow-md sm:h-20"
+  >
     <div class="mx-auto max-w-screen-lg sm:flex">
-      <div class="navbar-start">
+      <div class="navbar-start w-[36%]">
         <div class="dropdown">
           <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
             <svg
@@ -24,16 +26,26 @@
             class="z-1 dropdown-content menu menu-sm mt-3 w-52 rounded-box bg-base-100 p-2 text-base shadow"
           >
             <li><router-link to="/verify">Verificar obra</router-link></li>
-            <li><router-link to="/dashboard">Dashboard</router-link></li>
-            <li><router-link to="/dashboard_admin">Dashboard</router-link></li>
-            <li><router-link to="/projects">Mis poryectos</router-link></li>
-            <li><router-link to="/settings">Ajustes</router-link></li>
-            <li><router-link to="/logout">Salir</router-link></li>
+            <li v-if="isLoggedIn && !isAdmin">
+              <router-link to="/dashboard">Dashboard</router-link>
+            </li>
+            <li v-if="isAdmin">
+              <router-link to="/dashboard_admin">Dashboard</router-link>
+            </li>
+            <li v-if="isLoggedIn && !isAdmin">
+              <router-link to="/projects">Mis poryectos</router-link>
+            </li>
+            <li v-if="isLoggedIn">
+              <router-link to="/settings">Ajustes</router-link>
+            </li>
+            <li v-if="isLoggedIn">
+              <router-link to="/logout">Salir</router-link>
+            </li>
           </ul>
         </div>
         <router-link to="/">
           <img
-            class="logo block"
+            class="logo block w-[80px]"
             src="../assets/images/logo_dark@2x.png"
             alt="Musicdibs Logo"
           />
@@ -60,8 +72,8 @@
           </li>
         </ul>
       </div>
-      <div class="navbar-end">
-        <ul class="menu menu-horizontal px-1">
+      <div class="navbar-end w-[60%] sm:w-[30]">
+        <ul class="menu menu-horizontal px-0 sm:px-1">
           <li v-if="isLoggedIn && !isAdmin">
             <router-link to="/new_project">
               <button class="btn btn-primary border-0">

@@ -1,7 +1,7 @@
 <template>
   <div class="p-4">
     <h1 class="text-2xl font-bold">Mis Projectos</h1>
-    <section class="mt-4">
+    <section class="mt-4 px-4">
       <div class="musicdibs-card w-full bg-base-100">
         <div class="card-body">
           <h2 class="card-title">Listado de proyectos</h2>
@@ -12,7 +12,7 @@
             <li class="flex items-center justify-between p-2">
               <p class="pl-12">Titulo</p>
               <div
-                class="flex w-[30%] items-center justify-between text-center"
+                class="flex items-center justify-between text-center md:w-[30%]"
               >
                 <p class="px-2">Actualizado en</p>
                 <p class="px-2">Registrar</p>

@@ -1,7 +1,7 @@
 <template>
   <div class="p-4">
     <h1 class="text-2xl font-bold">Acceder</h1>
-    <section class="my-10 py-10">
+    <section class="my-10 px-4 sm:py-10">
       <div class="musicdibs-card secondary w-full bg-base-100 sm:w-3/5">
         <div class="card-body">
           <h2 class="card-title">Acceder</h2>
@@ -9,7 +9,7 @@
             Rellena el formuliario para acceder a tu cuenta de Musicdibs. Si no
             tienes cuenta, puedes crearla de forma gratuita.
           </p>
-          <div>
+          <form @submit.prevent="handleLogin">
             <div
               v-if="authStore.error"
               role="alert"
@@ -86,23 +86,23 @@
               </div>
             </fieldset>
             <div class="mt-3 flex gap-4">
-              <button class="btn btn-secondary" @click="handleLogin">
+              <button type="submit" class="btn btn-secondary">
                 <span
                   v-if="authStore.isLoading"
                   class="loading loading-dots loading-md"
                 ></span>
                 <span v-else>Acceder</span>
               </button>
-              <button class="btn btn-secondary btn-outline">
+              <button type="button" class="btn btn-secondary btn-outline">
                 <router-link to="/signup">Crear cuenta</router-link>
               </button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
       <div class="guxa flex justify-end">
         <img
-          class="musicdibs-shadow-scondary max-w-xl rounded-3xl"
+          class="musicdibs-shadow-scondary w-full max-w-xl rounded-3xl"
           src="../assets/images/chico_producer.png"
           alt="Una chico tocando la guitarra"
         />

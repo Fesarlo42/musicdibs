@@ -1,12 +1,12 @@
 <template>
-  <div class="w-full overflow-x-auto">
-    <table class="table w-full">
+  <div class="overflow-x-auto">
+    <table class="table">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Nombre</th>
+          <th class="hidden md:block">ID</th>
+          <th class="w-1/4 md:whitespace-nowrap">Nombre</th>
           <th>Correo Electrónico</th>
-          <th>Registrado El</th>
+          <th class="hidden md:block">Registrado el</th>
           <th>Créditos</th>
         </tr>
       </thead>
@@ -18,16 +18,16 @@
           class="hover cursor-pointer"
           @click="navigateToUserDetail(user.id)"
         >
-          <td>{{ user.id }}</td>
-          <td class="capitalize">
+          <td class="hidden md:block">{{ user.id }}</td>
+          <td class="w-1/4 capitalize md:whitespace-nowrap">
             {{ `${user.first_name} ${user.last_name}` }}
           </td>
           <td>{{ user.email }}</td>
-          <td>{{ formatDate(user.created_at) }}</td>
+          <td class="hidden md:block">{{ formatDate(user.created_at) }}</td>
           <td>
-            <div v-if="userCredits[user.id] !== undefined">
+            <template v-if="userCredits[user.id] !== undefined">
               {{ userCredits[user.id] }}
-            </div>
+            </template>
             <div v-else class="flex items-center">
               <span class="loading loading-spinner loading-xs mr-2"></span>
             </div>

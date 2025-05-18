@@ -3,11 +3,16 @@
     <div class="card-body">
       <h2 class="card-title">Describe tu nueva obra</h2>
       <p>Cuanto más detalles nos des, mejor será el resultado del asistente.</p>
-      <div class="grid grid-cols-2 gap-8">
+      <div class="grid-cols-2 gap-8 md:grid">
         <div>
           <fieldset class="fieldset">
             <legend class="fieldset-legend">Objetivo del proyecto</legend>
-            <input v-model="form.purpose" class="input" autofocus />
+            <input
+              v-model="form.purpose"
+              placeholder="Letra de canción, partitura, etc..."
+              class="input"
+              autofocus
+            />
           </fieldset>
 
           <fieldset class="fieldset">

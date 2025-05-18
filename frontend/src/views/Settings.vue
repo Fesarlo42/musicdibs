@@ -2,8 +2,8 @@
   <div class="p-4">
     <h1 class="text-2xl font-bold">Ajustes</h1>
 
-    <div class="grid grid-cols-1 gap-7 md:grid-cols-5">
-      <section class="order-1 pt-4 md:col-span-3 md:row-span-3">
+    <div class="grid grid-cols-1 md:grid-cols-5 md:gap-7">
+      <section class="order-1 p-4 md:col-span-3 md:row-span-3">
         <UserData
           :userData="userData"
           :error="useUsersStore.error"
@@ -18,7 +18,7 @@
         />
       </section>
 
-      <section class="order-2 pt-4 md:col-span-2 md:row-span-2">
+      <section class="order-2 p-4 md:col-span-2 md:row-span-2">
         <CreditHistory
           v-if="userData && userData.role === 'user'"
           :balance="creditsStore.balance"

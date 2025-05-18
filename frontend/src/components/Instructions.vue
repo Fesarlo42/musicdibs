@@ -73,7 +73,7 @@
             Registra tu obra
           </h4>
           <p class="text-pretty text-center">
-            Cuando estes listo, nosotros la encríptamos tu obra y registramos su
+            Cuando estes listo, nosotros la encriptamos tu obra y registramos su
             huella digital en blockchain.
           </p>
         </div>

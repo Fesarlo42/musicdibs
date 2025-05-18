@@ -3,6 +3,7 @@
     <h1 class="text-2xl font-bold">Dashboard</h1>
 
     <section
+      class="px-4"
       v-if="
         useProjectsStore.error || useCreditsStore.error || useAuthStore.error
       "
@@ -30,7 +31,7 @@
       </div>
     </section>
 
-    <div class="grid grid-cols-1 gap-7 md:grid-cols-4">
+    <div class="grid grid-cols-1 gap-7 px-4 md:grid-cols-4">
       <section class="order-1 pt-4 md:col-span-4">
         <SummaryUser />
       </section>

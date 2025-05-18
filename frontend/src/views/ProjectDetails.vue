@@ -3,6 +3,7 @@
     <h1 class="text-2xl font-bold">Detalles del Proyecto</h1>
 
     <section
+      class="px-6"
       v-if="
         useProjectsStore.error ||
         useGenresStore.error ||
@@ -37,7 +38,7 @@
     </section>
 
     <ProjectInfo
-      class="my-10"
+      class="mx-4 my-10"
       v-if="project"
       :project="project"
       :editable="!isRegistered"
@@ -51,7 +52,7 @@
 
     <ProjectRegistration
       v-if="hasUploadableFiles"
-      class="my-10"
+      class="mx-4 my-10"
       :isRegistered="isRegistered"
       :registration="registrationsStore.registration?.evidence_details || null"
       :reciptDownload="reciptDownload"
@@ -60,7 +61,7 @@
     />
 
     <ProjectAiAssistant
-      class="my-10"
+      class="mx-4 my-10"
       v-if="showAiChat"
       :project="project"
       :messages="conversationsStore.messages"
