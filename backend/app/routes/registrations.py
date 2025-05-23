@@ -139,7 +139,7 @@ async def verify_file(
             )
         
         # Get registration prof download url
-        registration_file = db.get(FileModel).filter(
+        registration_file = db.query(FileModel).filter(
             FileModel.project_id == project.id,
             FileModel.origin == "receipt"
         )
