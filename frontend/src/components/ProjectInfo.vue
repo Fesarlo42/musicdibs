@@ -303,35 +303,12 @@ const downloadFile = async () => {
   console.log("Downloading file...");
   if (!props.fileDownloadUrl) return;
 
-  try {
-    // Fetch the file using the presigned URL
-    const fileResponse = await fetch(props.fileDownloadUrl, {
-      method: "GET",
-      headers: {
-        "Cache-Control": "no-cache",
-      },
-    });
-
-    if (!fileResponse.ok) throw new Error("Failed to download file");
-
-    // Get as ArrayBuffer to preserve exact bytes
-    const arrayBuffer = await fileResponse.arrayBuffer();
-    const blob = new Blob([arrayBuffer], { type: "application/octet-stream" });
-
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename || userFile.value.name;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-  } catch (error) {
-    console.error("Download failed:", error);
-    // Fallback: if the presigned URL is already available as a prop
-    if (props.fileDownloadUrl) {
-      window.open(props.fileDownloadUrl, "_blank");
-    }
-  }
+  const a = document.createElement("a");
+  a.href = props.fileDownloadUrl;
+  a.target = "_blank";
+  a.download = "";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 };
 </script>

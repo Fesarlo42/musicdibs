@@ -65,6 +65,7 @@ def get_presigned_url(object_key: str) -> str:
         expiration=timedelta(seconds=3600), 
         method="GET",
         version="v4"
+        response_disposition="attachment"
     )
 
     return url
