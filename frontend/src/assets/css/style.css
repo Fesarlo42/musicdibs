@@ -249,6 +249,13 @@ input.primary-content {
 .stat {
   grid-template-columns: auto 1fr;
 }
+
+.timeline-middle > svg {
+  left: 6%;
+  position: relative;
+  top: 6%;
+}
+
 @media screen and (max-width: 1024px) {
   .timeline > li {
     @apply mb-10;

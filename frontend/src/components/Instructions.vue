@@ -2,7 +2,9 @@
   <div id="instructions" class="flex justify-center">
     <ul class="timeline timeline-vertical lg:timeline-horizontal">
       <li>
-        <div class="timeline-middle rounded-full bg-primary p-3">
+        <div
+          class="timeline-middle aspect-square w-20 flex-shrink-0 rounded-full bg-primary p-3"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -27,7 +29,9 @@
       </li>
       <li>
         <hr />
-        <div class="timeline-middle rounded-full bg-primary p-3">
+        <div
+          class="timeline-middle aspect-square w-20 flex-shrink-0 rounded-full bg-primary p-3"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -54,7 +58,9 @@
       </li>
       <li>
         <hr />
-        <div class="timeline-middle rounded-full bg-primary p-3">
+        <div
+          class="timeline-middle aspect-square w-20 flex-shrink-0 rounded-full bg-primary p-3"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -81,7 +87,9 @@
       </li>
       <li>
         <hr />
-        <div class="timeline-middle rounded-full bg-primary p-3">
+        <div
+          class="timeline-middle aspect-square w-20 flex-shrink-0 rounded-full bg-primary p-3"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
