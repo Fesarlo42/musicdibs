@@ -156,6 +156,19 @@
         </div>
       </div>
     </section>
+
+    <section class="mt-8">
+      <div class="musicdibs-card secondary bg-base-100">
+        <div class="card-body">
+          <h2 class="card-title">Proyectos del usuario</h2>
+          <UserProjectsList
+            v-if="userData && userData.id"
+            :userId="userData.id"
+          />
+          <p v-else>No hay proyectos para mostrar.</p>
+        </div>
+      </div>
+    </section>
   </div>
 
   <CreditsModal
@@ -176,6 +189,7 @@ import { useCreditsStore } from "../stores/credits.js";
 import { useAuthStore } from "../stores/auth.js";
 
 import CreditsModal from "../components/CreditsModal.vue";
+import UserProjectsList from "../components/UsersProjectsList.vue";
 
 const projectsStore = useProjectsStore();
 const creditsStore = useCreditsStore();
