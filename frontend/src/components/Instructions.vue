@@ -1,7 +1,7 @@
 <template>
   <div id="instructions" class="flex justify-center">
     <ul class="timeline timeline-vertical lg:timeline-horizontal">
-      <li>
+      <li class="flex flex-col items-center justify-center md:block">
         <div
           class="timeline-middle aspect-square w-20 flex-shrink-0 rounded-full bg-primary p-3"
         >
@@ -27,7 +27,7 @@
         </div>
         <hr />
       </li>
-      <li>
+      <li class="flex flex-col items-center justify-center md:block">
         <hr />
         <div
           class="timeline-middle aspect-square w-20 flex-shrink-0 rounded-full bg-primary p-3"
@@ -56,7 +56,7 @@
         </div>
         <hr />
       </li>
-      <li>
+      <li class="flex flex-col items-center justify-center md:block">
         <hr />
         <div
           class="timeline-middle aspect-square w-20 flex-shrink-0 rounded-full bg-primary p-3"
@@ -85,7 +85,7 @@
         </div>
         <hr />
       </li>
-      <li>
+      <li class="flex flex-col items-center justify-center md:block">
         <hr />
         <div
           class="timeline-middle aspect-square w-20 flex-shrink-0 rounded-full bg-primary p-3"

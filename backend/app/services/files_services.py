@@ -64,7 +64,7 @@ def get_presigned_url(object_key: str) -> str:
     url = blob.generate_signed_url(
         expiration=timedelta(seconds=3600), 
         method="GET",
-        version="v4"
+        version="v4",
         response_disposition="attachment"
     )
 
