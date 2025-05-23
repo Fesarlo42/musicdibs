@@ -120,11 +120,7 @@
               <div class="flex items-center gap-2">
                 <template v-if="userFile">
                   <p>{{ userFile.name || "-" }}</p>
-                  <a
-                    class="btn btn-ghost btn-sm"
-                    :href="fileDownloadUrl"
-                    target="_blank"
-                  >
+                  <button class="btn btn-ghost btn-sm" @click="downloadFile">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -137,7 +133,7 @@
                         clip-rule="evenodd"
                       />
                     </svg>
-                  </a>
+                  </button>
 
                   <button
                     v-if="editable"
@@ -300,6 +296,42 @@ const handleDeleteFile = () => {
   if (userFile.value && props.editable) {
     emit("deleteFile", userFile.value);
     stopEditing();
+  }
+};
+
+const downloadFile = async () => {
+  console.log("Downloading file...");
+  if (!props.fileDownloadUrl) return;
+
+  try {
+    // Fetch the file using the presigned URL
+    const fileResponse = await fetch(props.fileDownloadUrl, {
+      method: "GET",
+      headers: {
+        "Cache-Control": "no-cache",
+      },
+    });
+
+    if (!fileResponse.ok) throw new Error("Failed to download file");
+
+    // Get as ArrayBuffer to preserve exact bytes
+    const arrayBuffer = await fileResponse.arrayBuffer();
+    const blob = new Blob([arrayBuffer], { type: "application/octet-stream" });
+
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename || userFile.value.name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Download failed:", error);
+    // Fallback: if the presigned URL is already available as a prop
+    if (props.fileDownloadUrl) {
+      window.open(props.fileDownloadUrl, "_blank");
+    }
   }
 };
 </script>
