@@ -272,4 +272,8 @@ input.primary-content {
     @apply block w-full;
     margin-top: 3rem !important;
   }
+
+  .timeline-middle {
+    margin: 0 auto;
+  }
 }
