@@ -104,7 +104,7 @@ async def finish_conversation(
             "status": "success",
             "file_id": db_file.id,
             "filename": db_file.name,
-            "download_url": get_presigned_url(object_key)
+            "download_url": get_presigned_url(object_key, db_file.name)
         }
 
     except Exception as e:

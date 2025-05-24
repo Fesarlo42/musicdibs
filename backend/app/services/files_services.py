@@ -56,7 +56,7 @@ def delete_file(object_key: str):
     blob = bucket.blob(object_key)
     blob.delete()
 
-def get_presigned_url(object_key: str) -> str:
+def get_presigned_url(object_key: str, file_name: str) -> str:
     bucket = storage_client.bucket(BUCKET_NAME)
     blob = bucket.blob(object_key)
 
@@ -65,7 +65,8 @@ def get_presigned_url(object_key: str) -> str:
         expiration=timedelta(seconds=3600), 
         method="GET",
         version="v4",
-        response_disposition="attachment"
+        response_disposition=f'attachment; filename="{file_name}"',
+
     )
 
     return url

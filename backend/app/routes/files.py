@@ -101,7 +101,7 @@ async def download_file(
     
     try:
         # Generate presigned URL
-        presigned_url = get_presigned_url(db_file.object_key)
+        presigned_url = get_presigned_url(db_file.object_key, db_file.name)
         
         # Return URL for frontend to use
         return {"download_url": presigned_url, "filename": db_file.name}

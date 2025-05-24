@@ -142,7 +142,7 @@ async def verify_file(
         registration_file = db.query(FileModel).filter(
             FileModel.project_id == project.id,
             FileModel.origin == "receipt"
-        )
+        ).first()
 
         if registration_file is None:
             raise HTTPException(
@@ -150,8 +150,10 @@ async def verify_file(
                 detail=f"Registration file not found for project {project.id}"
             )
         
+        print(f"Found receipt file: {registration_file.object_key}")
+        
         # Generate presigned URL for the registration file
-        presigned_url = get_presigned_url(registration_file.object_key)
+        presigned_url = get_presigned_url(registration_file.object_key, registration_file.name)
 
 
         # Return basic project information
@@ -311,7 +313,7 @@ async def get_registration(
     if receipt_file:
         # Generate presigned URL for the receipt
         try:
-            receipt_url = get_presigned_url(receipt_file.object_key)
+            receipt_url = get_presigned_url(receipt_file.object_key, receipt_file.name)
         except Exception as e:
             # Log the error but continue with the rest of the response
             print(f"Error generating presigned URL: {str(e)}")
