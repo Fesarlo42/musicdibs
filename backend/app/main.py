@@ -16,7 +16,12 @@ from app.routes import (
     messages_router
 )
 
-app = FastAPI(debug=True)
+app = FastAPI(
+    debug=True, 
+    title="Musicdibs API", 
+    description="Proyecto final de ciclo de Desarrollo de Aplicacionees Web - Registra canciones en blockchain y crea letras con AI", 
+    version="0.0.0"
+)
 
 # CORS configuration
 origins = [
