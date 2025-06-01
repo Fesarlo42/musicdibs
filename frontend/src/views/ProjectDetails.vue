@@ -222,11 +222,13 @@ const handleDeleteFile = async (file) => {
 const handleRegisterProject = async () => {
   if (hasUploadableFiles) {
     await registrationsStore.createRegistration(project.value.id);
-    setTimeout(reloadProject, 2000);
+    setTimeout(() => {
+      reloadProject();
+      window.location.reload();
+    }, 1500);
   } else {
-    localError.value(
-      "No puedes hacer registros sin ningun archivo. Por favo, sube o genera un archivo con nuestro asistente AI.",
-    );
+    localError.value =
+      "No puedes hacer registros sin ningun archivo. Por favo, sube o genera un archivo con nuestro asistente AI.";
   }
 };
 
