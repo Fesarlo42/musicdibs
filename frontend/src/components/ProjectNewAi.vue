@@ -36,7 +36,7 @@
 
           <div class="mt-10 flex justify-end gap-4">
             <button class="btn btn-primary" @click="handleSubmit">
-              Empezar chat
+              Guardar
             </button>
           </div>
         </div>
