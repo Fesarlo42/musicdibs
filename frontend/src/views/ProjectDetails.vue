@@ -248,6 +248,7 @@ const handleFinishConversation = async () => {
     await conversationsStore.getConversation(conversationId.value);
     showAiChat.value = null;
     reloadProject();
+    window.location.reload();
   }
 };
 </script>
